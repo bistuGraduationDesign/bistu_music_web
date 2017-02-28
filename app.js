@@ -1,6 +1,7 @@
 var path = require("path");
 var fs = require("fs");
 var express = require("express");
+var bodyParser = require('body-parser') 
 var cookieParser = require("cookie-parser");
 var MongoStore = require("connect-mongo")(express);
 
@@ -15,6 +16,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use(express.bodyParser());
 // cookie
 app.use(cookieParser());
 app.use(express.session({

@@ -292,7 +292,7 @@
 
         <div class='section-header text-center' >
           <h2 class='wow fadeInUp' data-wow-delay='.2s' >Say Hello!</h2>
-          <p class='wow fadeInUp' data-wow-delay='.4s' >NIce to meet you ！ 很高兴遇到你 ！</p>
+          <p class='wow fadeInUp' data-wow-delay='.4s' >NIce to meet you ！ 很高兴遇见你 ！</p>
         </div>
 
         <div class='row' >
@@ -306,7 +306,7 @@
                 <div class='col-md-6' >
 
                   <div class='form-group' >
-                    <input type='text' class='form-control wow fadeInUp' data-wow-delay='.4s' name='name' placeholder='Name' required>
+                    <input type='text' class='form-control wow fadeInUp' data-wow-delay='.4s' id='name' placeholder='Name' required>
                     <div class='help-block with-errors' ></div>
                   </div>
 
@@ -314,7 +314,7 @@
                 <div class='col-md-6' >
 
                   <div class='form-group' >
-                    <input type='email' class='form-control wow fadeInUp' data-wow-delay='.5s' name='email' placeholder='Email' required>
+                    <input type='email' class='form-control wow fadeInUp' data-wow-delay='.5s' id='email' placeholder='Email' required>
                     <div class='help-block with-errors' ></div>
                   </div>
 
@@ -322,18 +322,19 @@
               </div>
 
               <div class='form-group' >
-                <input type='text' class='form-control wow fadeInUp' data-wow-delay='.6s' name='subject' placeholder='Subject' required>
+                <input type='text' class='form-control wow fadeInUp' data-wow-delay='.6s' id='password' placeholder='Password' required>
                 <div class='help-block with-errors' ></div>
               </div>
 
               <div class='form-group' >
-                <textarea class='form-control wow fadeInUp' data-wow-delay='.8s' name='message' placeholder='Message' rows='5' required></textarea>
+                <input type='text' class='form-control wow fadeInUp' data-wow-delay='.8s' id='passwordrepeat' placeholder='Password-repeat' required>
                 <div class='help-block with-errors' ></div>
               </div>
+             
 
               <div class='form-group text-center' >
-                <button type='submit' class='btn-custom wow fadeInUp' data-wow-delay='1s' >
-                  Send Message
+                <button type='submit' class='btn-custom wow fadeInUp' data-wow-delay='1s' id = 'reg'>
+                  Register NOW!
                 </button>
               </div>
 
@@ -381,6 +382,31 @@
       JavaScript Files
     ======================================================-->
     <script src='http://cimply.co/js/jquery.min.js' ></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      var buttonArr = document.getElementById('reg');
+      buttonArr.addEventListener('click', function() {
+        console.log("aaa");
+        $.ajax({
+          type: 'POST',
+          url: '/reg',
+          data: {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            password: document.getElementById('password').value,
+            passwordrepeat: document.getElementById('passwordrepeat').value
+          },
+          dataType: "json",
+          success: function(data) {
+            console.log(data);
+            window.location = '/signin'
+            
+          }
+        });
+      }, false);
+
+    })
+    </script>
     <script src='js/bootstrap.min.js' ></script>
     <script src='http://cimply.co/js/jquery.magnific-popup.min.js' ></script>
     <script src='http://cimply.co/js/jquery.ajaxchimp.min.js' ></script>

@@ -107,12 +107,12 @@
     
 
               <div class='form-group' >
-                <input type='text' class='form-control wow fadeInUp' data-wow-delay='.4s' name='subject' placeholder='Name' required>
+                <input type='text' class='form-control wow fadeInUp' data-wow-delay='.4s' id='name' placeholder='Name' required>
                 <div class='help-block with-errors' ></div>
               </div>
 
               <div class='form-group' >
-                <input type='text' class='form-control wow fadeInUp' data-wow-delay='.5s' name='subject' placeholder='Password' required>
+                <input type='text' class='form-control wow fadeInUp' data-wow-delay='.5s' id='password' placeholder='Password' required>
                 <div class='help-block with-errors' ></div>
               </div>
 
@@ -120,7 +120,7 @@
                 <div class='col-md-6' >
 
                   <div class='form-group' >
-                    <input type='text' class='form-control wow fadeInUp' data-wow-delay='.6s' name='name' placeholder='CAPTCHA' required>
+                    <input type='text' class='form-control wow fadeInUp' data-wow-delay='.6s' id='ccapcode' placeholder='CAPTCHA' required>
                     <div class='help-block with-errors' ></div>
                   </div>
 
@@ -137,8 +137,8 @@
               </div>
 
               <div class='form-group text-center' >
-                <button type='submit' class='btn-custom wow fadeInUp' data-wow-delay='1s' >
-                  Send Message
+                <button id = 'signin' type='submit' class='btn-custom wow fadeInUp' data-wow-delay='1s' >
+                  Sign in
                 </button>
               </div>
 
@@ -188,16 +188,35 @@
     <script src='http://cimply.co/js/jquery.min.js' ></script>
     <script type="text/javascript">
     $(document).ready(function(){
-      var buttonArr = document.getElementById('ccap');
-      console.log(buttonArr);
+      var buttonCcap = document.getElementById('ccap');
+      console.log(buttonCcap);
       var change = 0;
-      buttonArr.addEventListener('click', function(){
+      buttonCcap.addEventListener('click', function(){
         console.log("aaa");
         change++;
         var url = 'http://localhost:3001/verificationCode?time='+change;
-        buttonArr.setAttribute('src', url);
+        buttonCcap.setAttribute('src', url);
       }, false);
-      
+
+      var buttonSignin = document.getElementById('signin');
+      buttonSignin.addEventListener('click', function() {
+        console.log("aaa");
+        $.ajax({
+          type: 'POST',
+          url: '/signin',
+          data: {
+            name: document.getElementById('name').value,
+            password: document.getElementById('password').value,
+            verCode: document.getElementById('ccapcode').value
+          },
+          dataType: "json",
+          success: function(data) {
+            console.log(data);
+            // window.location = '/signin'
+            
+          }
+        });
+      }, false);
     })
     </script>
     
