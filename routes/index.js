@@ -21,23 +21,30 @@ function changeVerCode(req, res) {
   var captchaText = captchaArr[0],
     captchaBuffer = captchaArr[1];
   req.session.verCode = captchaText;
-  console.log("changeVerCode："+req.session.verCode);
+  console.log("changeVerCode：" + req.session.verCode);
   res.end(captchaBuffer);
 }
 
 function checkVerCode(req, res) {
+  var msg;
+  console.log(req.body.verCode);
+  console.log(req.session.verCode);
   if (req.session.verCode) {
-    console.log(req.query.verCode);
-    if (req.query.verCode == req.session.verCode) {
-      res.jsonp({
-        result: true,
-        reason: '验证正确'
-      });
+    console.log("checkVerCode:" + req.body.verCode);
+    console.log("checkVerCode:" + req.body.verCode.toUpperCase());
+    console.log("checkVerCode:" + req.session.verCode.substring(0,4));
+    if (req.body.verCode.toUpperCase() == req.session.verCode.substring(0,4)) {
+      msg = {
+        state: true,
+        info: "验证码正确"
+      };
+      return res.send(msg);
     } else {
-      res.jsonp({
-        result: false,
-        reason: '验证码错误'
-      });
+      msg = {
+        state: false,
+        info: "验证码错误"
+      };
+      return res.send(msg);
     }
   }
 };
@@ -50,56 +57,54 @@ module.exports = function(app) {
   app.get("/signin", function(req, res) {
     res.render("signin", {});
   });
-  app.use('/verificationCode', function(req, res) {
+  app.get('/verificationCode/:random', function(req, res) {
     changeVerCode(req, res);
   });
-  app.use('/goVerification', function(req, res) {
+  app.post('/checkVerCode', function(req, res) {
+    console.log("in checkVerCode")
     checkVerCode(req, res);
   });
 
 
   app.post('/signin', function(req, res) {
+    var msg;
     //生成密码的 md5 值
     var md5 = crypto.createHash('md5'),
       password = md5.update(req.body.password).digest('hex');
     //检查用户是否存在
     //console.log(req.body.name);
-
-    //检查verCode是否一致
-    console.log(JSON.stringify(req.session));
-    console.log(req.session.verCode);
-    console.log(req.body.verCode);
-    if (req.session.verCode != req.body.verCode) {
-      return res.render('signin', {
-      err: "verCode错误"
-    });
-      // res.json({
-      //   err: "verCode错误"
-      // }); //密码错误则跳转到登录页
-    }
     User.get(req.body.name, function(err, user) {
       if (!user) {
-        return res.json({
-          err: "用户不存在"
-        }); //用户不存在则跳转到登录页
+        msg = {
+          state: false,
+          info: "用户不存在"
+        };
+        return res.send(msg);
+        //用户不存在则跳转到登录页
       }
       //检查密码是否一致
       if (user.password != password) {
-        return res.json({
-          err: "密码错误"
-        }); //密码错误则跳转到登录页
+        msg = {
+          state: false,
+          info: "密码错误"
+        };
+        //密码错误则跳转到登录页
       }
 
       //用户名密码都匹配后，将用户信息存入 session
       req.session.user = user;
-      return res.json({
-        sussess: "1"
-      });
+      msg = {
+        state: true,
+        info: "sussess"
+      };
+      return res.send(msg);
+
       // res.redirect('/');//登陆成功后跳转到主页
     });
   });
 
   app.post('/reg', function(req, res) {
+    var msg;
     var name = req.body.name;
     var email = req.body.email;
     var password = req.body.password;
@@ -107,9 +112,11 @@ module.exports = function(app) {
     //检验用户两次输入的密码是否一致
     if (password_re != password) {
       console.log("in");
-      return res.json({
-        err: "两次输入的密码是不一致"
-      });
+      msg = {
+        state: false,
+        info: "两次输入的密码是不一致"
+      };
+      return res.send(msg);
     }
     // 生成密码的 md5 值
     var md5 = crypto.createHash('md5');
@@ -126,23 +133,28 @@ module.exports = function(app) {
     //检查用户名是否已经存在 
     User.get(newUser.name, function(err, user) {
       if (user) {
-        return res.json({
-          err: "用户已存在"
-        });
+        msg = {
+          state: false,
+          info: "用户已存在"
+        };
+        return res.send(msg);
       }
       //如果不存在则新增用户
       newUser.save(function(err, user) {
         if (err) {
-          req.flash('error', err);
-          return res.json({
-            err: "请重试"
-          }); //注册失败返回主册页
+          msg = {
+            state: false,
+            info: "请重试"
+          }; //注册失败返回主册页
+          return res.send(msg);
         }
         console.log(user);
         // req.session.user = user; //用户信息存入 session
-        return res.json({
-          sussess: "1"
-        }); //注册成功后返回主页
+        msg = {
+          state: true,
+          info: "sussess"
+        };
+        return res.send(msg); //注册成功后返回主页
       });
     });
   });

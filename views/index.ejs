@@ -24,6 +24,7 @@
     <link rel='stylesheet' type='text/css' href='http://cimply.co/css/owl.carousel.css' >
     <link rel='stylesheet' type='text/css' href='http://cimply.co/css/magnific-popup.css' >
     <link rel='stylesheet' type='text/css' href='http://cimply.co/css/style.css' >
+    <link rel='stylesheet' type='text/css' href='toastr/toastr.min.css' >
   </head>
 
   <body>
@@ -300,7 +301,7 @@
 
             <form id='contact-form' name='contactForm' class='contact-form' data-toggle='validator' >
 
-              <div id='contact-form-result' ></div>
+             
 
               <div class='row' >
                 <div class='col-md-6' >
@@ -381,9 +382,9 @@
     <!--======================================================
       JavaScript Files
     ======================================================-->
-    <script src='http://cimply.co/js/jquery.min.js' ></script>
+    <script src='/music/js/jquery.min.js' ></script>
     <script type="text/javascript">
-    $(document).ready(function() {
+    jQuery(document).ready(function($) {
       var buttonArr = document.getElementById('reg');
       buttonArr.addEventListener('click', function() {
         console.log("aaa");
@@ -397,10 +398,47 @@
             passwordrepeat: document.getElementById('passwordrepeat').value
           },
           dataType: "json",
-          success: function(data) {
-            console.log(data);
-            window.location = '/signin'
-            
+          success: function(res) {
+            console.log(res);
+            if (!!res.state) {
+              var opts = {
+                "closeButton": true,
+                "debug": false,
+                "positionClass": "toast-top-full-width",
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+              };
+              toastr.success(res.info, "成功", opts);
+            }
+            if (!res.state) {
+              var opts = {
+                "closeButton": true,
+                "debug": false,
+                "positionClass": "toast-top-full-width",
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+              };
+              toastr.error(res.info, "失败", opts);
+            }
+            setTimeout("window.location.href = '/' ",3000);
+                
+              
+            // window.location = '/signin'
+
           }
         });
       }, false);
@@ -408,6 +446,7 @@
     })
     </script>
     <script src='js/bootstrap.min.js' ></script>
+    <script src="toastr/toastr.min.js"></script>
     <script src='http://cimply.co/js/jquery.magnific-popup.min.js' ></script>
     <script src='http://cimply.co/js/jquery.ajaxchimp.min.js' ></script>
     <script src='http://cimply.co/js/parallax.min.js' ></script>

@@ -9,7 +9,7 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
     <!-- Remove Tap Highlight on Windows Phone IE -->
-        <meta name="msapplication-tap-highlight" content="no"/>
+    <meta name="msapplication-tap-highlight" content="no"/>
 
     <title>瑛子的音乐天地!</title>
 
@@ -24,6 +24,7 @@
     <link rel='stylesheet' type='text/css' href='http://cimply.co/css/owl.carousel.css' >
     <link rel='stylesheet' type='text/css' href='http://cimply.co/css/magnific-popup.css' >
     <link rel='stylesheet' type='text/css' href='cimply/css/style.css' >
+    <link rel='stylesheet' type='text/css' href='toastr/toastr.min.css' >
   </head>
 
   <body>
@@ -102,8 +103,7 @@
 
             <form id='contact-form' name='contactForm' class='contact-form' data-toggle='validator' >
 
-              <div id='contact-form-result' ></div>
-
+              
     
 
               <div class='form-group' >
@@ -128,7 +128,7 @@
                 <div class='col-md-2' >
 
                   <div class='form-group' >
-                  <img id = 'ccap' src="http://localhost:3001/verificationCode" class='form-control-ccap wow fadeInUp' alt="刷新" data-wow-delay='.8s' class="verCodePic" required>
+                  <img id = 'ccap' src="/verificationCode/1" class='form-control-ccap wow fadeInUp' alt="刷新" data-wow-delay='.8s' class="verCodePic" required>
                   
                     
                   </div>
@@ -185,42 +185,113 @@
     <!--======================================================
       JavaScript Files
     ======================================================-->
-    <script src='http://cimply.co/js/jquery.min.js' ></script>
+    <script src='/music/js/jquery.min.js' ></script>
     <script type="text/javascript">
-    $(document).ready(function(){
+    jQuery(document).ready(function($) {
       var buttonCcap = document.getElementById('ccap');
       console.log(buttonCcap);
-      var change = 0;
-      buttonCcap.addEventListener('click', function(){
+      var change = 1;
+      buttonCcap.addEventListener('click', function() {
         console.log("aaa");
         change++;
-        var url = 'http://localhost:3001/verificationCode?time='+change;
+        var url = '/verificationCode/' + change;
         buttonCcap.setAttribute('src', url);
       }, false);
 
       var buttonSignin = document.getElementById('signin');
       buttonSignin.addEventListener('click', function() {
-        console.log("aaa");
+        console.log("aaaa");
+        console.log(document.getElementById('ccapcode').value);
         $.ajax({
           type: 'POST',
-          url: '/signin',
+          url: '/checkVerCode',
           data: {
-            name: document.getElementById('name').value,
-            password: document.getElementById('password').value,
             verCode: document.getElementById('ccapcode').value
           },
-          dataType: "json",
-          success: function(data) {
-            console.log(data);
-            // window.location = '/signin'
+          dataType: 'json',
+          success: function(res) {
+            console.log(res);
+            if (!!res.state) {
+              $.ajax({
+              type: 'POST',
+              url: '/signin',
+              data: {
+                name: document.getElementById('name').value,
+                password: document.getElementById('password').value
+              },
+              dataType: "json",
+              success: function(res1) {
+                console.log(res1);
+                console.log(res1);
+                if (!!res1.state) {
+                  var opts = {
+                    "closeButton": true,
+                    "debug": false,
+                    "positionClass": "toast-top-full-width",
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                  };
+                  toastr.success(res1.info, "成功", opts);
+                  setTimeout("window.location.href = '/signin' ",3000);
+                }
+                if (!res1.state) {
+                  var opts = {
+                    "closeButton": true,
+                    "debug": false,
+                    "positionClass": "toast-top-full-width",
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                  };
+                  toastr.error(res1.info, "失败", opts);
+                  setTimeout("window.location.href = '/signin' ",3000);
+                }
+                // window.location = '/signin'
+
+              }
+            });
+            }
+            if (!res.state) {
+              var opts = {
+                "closeButton": true,
+                "debug": false,
+                "positionClass": "toast-top-full-width",
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+              };
+              toastr.error(res.info, "失败", opts);
+              setTimeout("window.location.href = '/signin' ",3000);
+            }
             
           }
         });
+
       }, false);
     })
     </script>
     
     <script src='js/bootstrap.min.js' ></script>
+    <script src="toastr/toastr.min.js"></script>
     <script src='http://cimply.co/js/jquery.magnific-popup.min.js' ></script>
     <script src='http://cimply.co/js/jquery.ajaxchimp.min.js' ></script>
     <script src='http://cimply.co/js/parallax.min.js' ></script>
