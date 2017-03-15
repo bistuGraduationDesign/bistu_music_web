@@ -6,6 +6,7 @@ var ccap = require('ccap');
 
 var settings = require("../settings");
 var User = require("../models/user");
+var Music = require("../models/music");
 
 //captcha
 var captcha = ccap({
@@ -32,8 +33,8 @@ function checkVerCode(req, res) {
   if (req.session.verCode) {
     console.log("checkVerCode:" + req.body.verCode);
     console.log("checkVerCode:" + req.body.verCode.toUpperCase());
-    console.log("checkVerCode:" + req.session.verCode.substring(0,4));
-    if (req.body.verCode.toUpperCase() == req.session.verCode.substring(0,4)) {
+    console.log("checkVerCode:" + req.session.verCode.substring(0, 4));
+    if (req.body.verCode.toUpperCase() == req.session.verCode.substring(0, 4)) {
       msg = {
         state: true,
         info: "验证码正确"
@@ -159,8 +160,63 @@ module.exports = function(app) {
     });
   });
   app.get("/music", function(req, res) {
+    console.log(req.session.user);
+    user = req.session.user;
+    Music.getgetByType(user.type, function(err, music) {
+      if (err) {
+        msg = {
+          state: false,
+          info: "请重试"
+        }; //注册失败返回主册页
+        return res.send(msg);
+      }
+      
+    });
     res.render("music", {});
   });
+
+  app.get("/upload", function(req, res) {
+    res.render("upload", {});
+  });
+  //音乐名、作者、类型、次数
+  app.post("/upload", function(req, res) {
+    console.log(req);
+
+    var newMusic = new Music({
+      name: name,
+      author: author,
+      type: type,
+      time: 0
+    });
+
+    //检查用户名是否已经存在
+    Music.getByName(newMusic.name, function(err, music) {
+      if (music) {
+        msg = {
+          state: false,
+          info: "用户已存在"
+        };
+        return res.send(msg);
+      }
+      //如果不存在则新增用户
+      newMusic.save(function(err, music) {
+        if (err) {
+          msg = {
+            state: false,
+            info: "请重试"
+          }; //失败返回
+          return res.send(msg);
+        }
+        console.log(music);
+        msg = {
+          state: true,
+          info: "sussess"
+        };
+        return res.send(msg); //成功后返回
+      });
+    });
+  });
+
   // app.get("/gameCenter", function(req, res) {
   //   res.render("gameCenter", {});
   // });

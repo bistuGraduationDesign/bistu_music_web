@@ -4,6 +4,7 @@ function User(user) {
   this.name = user.name;
   this.email = user.email;
   this.password = user.password;
+  this.type = 3 //摇滚1 民谣2 流行3
 };
 
 module.exports = User;
@@ -16,6 +17,7 @@ User.prototype.save = function(callback) {
     name: this.name,
     email: this.email,
     password: this.password,
+    type: this.type,
     time: date
   };
   //打开数据库
