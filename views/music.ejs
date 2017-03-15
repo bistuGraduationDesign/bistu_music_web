@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="app">
-<head>  
+<head>
   <meta charset="utf-8" />
   <title>Musik | Web Application</title>
   <meta name="description" content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav" />
@@ -18,6 +18,7 @@
     <script src="js/ie/respond.min.js"></script>
     <script src="js/ie/excanvas.js"></script>
   <![endif]-->
+
 </head>
 <body class="">
   <section class="vbox">
@@ -26,15 +27,16 @@
         <a class="btn btn-link visible-xs" data-toggle="class:nav-off-screen,open" data-target="#nav,html">
           <i class="icon-list"></i>
         </a>
-        <a href="index.html" class="navbar-brand text-lt">
+        <span href="index.html" class="navbar-brand text-lt">
           <i class="icon-earphones"></i>
           <img src="/music/images/logo.png" alt="." class="hide">
           <span class="hidden-nav-xs m-l-sm">Musik</span>
-        </a>
+        </span>
         <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".user">
           <i class="icon-settings"></i>
         </a>
-      </div>      <ul class="nav navbar-nav hidden-xs">
+      </div>
+      <ul class="nav navbar-nav hidden-xs " style="display:none">
         <li>
           <a href="#nav,.navbar-header" data-toggle="class:nav-xs,nav-xs" class="text-muted">
             <i class="fa fa-indent text"></i>
@@ -53,8 +55,8 @@
         </div>
       </form>
       <div class="navbar-right ">
-        <ul class="nav navbar-nav m-n hidden-xs nav-user user">
-          <li class="hidden-xs">
+        <ul class="nav navbar-nav m-n hidden-xs nav-user user" >
+          <li class="hidden-xs" style="display:none">
             <a href="#" class="dropdown-toggle lt" data-toggle="dropdown">
               <i class="icon-bell"></i>
               <span class="badge badge-sm up bg-danger count">2</span>
@@ -95,7 +97,7 @@
               </span>
               John.Smith <b class="caret"></b>
             </a>
-            <ul class="dropdown-menu animated fadeInRight">            
+            <ul class="dropdown-menu animated fadeInRight">
               <li>
                 <span class="arrow top"></span>
                 <a href="#">Settings</a>
@@ -119,20 +121,20 @@
             </ul>
           </li>
         </ul>
-      </div>      
+      </div>
     </header>
     <section>
       <section class="hbox stretch">
         <!-- .aside -->
-        <aside class="bg-black dk nav-xs aside hidden-print" id="nav">          
+        <aside class="bg-black dk nav-xs aside hidden-print" style="display:none" id="nav">
           <section class="vbox">
             <section class="vbox">
             <section class="w-f-md scrollable">
               <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="10px" data-railOpacity="0.2">
-                
 
 
-                <!-- nav -->                 
+
+                <!-- nav -->
                 <nav class="nav-primary hidden-xs">
                   <ul class="nav bg clearfix">
                     <li class="hidden-nav-xs padder m-t m-b-sm text-xs text-muted">
@@ -163,31 +165,31 @@
                         <span class="font-bold">Listen</span>
                       </a>
                     </li>
-                    
+
                     <li class="m-b hidden-nav-xs"></li>
                   </ul>
                 </nav>
                 <!-- / nav -->
               </div>
             </section>
-            
+
             <footer class="footer hidden-xs no-padder text-center-nav-xs">
               <div class="bg hidden-xs ">
                   <div class="dropdown dropup wrapper-sm clearfix">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                      <span class="thumb-sm avatar pull-left m-l-xs">                        
+                      <span class="thumb-sm avatar pull-left m-l-xs">
                         <img src="/music/images/a3.png" class="dker" alt="...">
                         <i class="on b-black"></i>
                       </span>
                       <span class="hidden-nav-xs clear">
                         <span class="block m-l">
-                          <strong class="font-bold text-lt">John.Smith</strong> 
+                          <strong class="font-bold text-lt">John.Smith</strong>
                           <b class="caret"></b>
                         </span>
                         <span class="text-muted text-xs block m-l">Art Director</span>
                       </span>
                     </a>
-                    <ul class="dropdown-menu animated fadeInRight aside text-left">                      
+                    <ul class="dropdown-menu animated fadeInRight aside text-left">
                       <li>
                         <span class="arrow bottom hidden-nav-xs"></span>
                         <a href="#">Settings</a>
@@ -227,7 +229,7 @@
                     <span class="bar4 a4 bg-warning dk"></span>
                     <span class="bar5 a5 bg-danger dker"></span>
                   </span></h2>
-                  <div class="row row-sm">
+                  <div class="row row-sm" id="discover">
                     <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
                       <div class="item">
                         <div class="pos-rlt">
@@ -423,7 +425,7 @@
                                 <i class="fa fa-plus-circle"></i>
                               </a>
                             </div>
-                          </div>                          
+                          </div>
                           <a href="#"><img src="/music/images/p6.jpg" alt="" class="r r-2x img-full"></a>
                         </div>
                         <div class="padder-v">
@@ -633,7 +635,7 @@
                   <div class="row">
                     <div class="col-md-7">
                       <h3 class="font-thin">New Songs</h3>
-                      <div class="row row-sm">
+                      <div class="row row-sm" id="newSongs">
                         <div class="col-xs-6 col-sm-3">
                           <div class="item">
                             <div class="pos-rlt">
@@ -766,7 +768,7 @@
                     </div>
                     <div class="col-md-5">
                       <h3 class="font-thin">Top Songs</h3>
-                      <div class="list-group bg-white list-group-lg no-bg auto">                          
+                      <div class="list-group bg-white list-group-lg no-bg auto" id="topSongs">
                         <a href="#" class="list-group-item clearfix">
                           <span class="pull-right h2 text-muted m-l">1</span>
                           <span class="pull-left thumb-sm avatar m-r">
@@ -820,7 +822,7 @@
                       </div>
                     </div>
                   </div>
-                  
+
                 </section>
                 <footer class="footer bg-dark">
                 <div id="jp_container_N">
@@ -893,22 +895,22 @@
                 </footer>
               </section>
             </section>
-            
-                
-                        
-            
+
+
+
+
             <!-- / side content -->
           </section>
           <a href="#" class="hide nav-off-screen-block" data-toggle="class:nav-off-screen,open" data-target="#nav,html"></a>
         </section>
       </section>
-    </section>    
+    </section>
   </section>
   <script src="/music/js/jquery.min.js"></script>
   <!-- Bootstrap -->
   <script src="/music/js/bootstrap.js"></script>
   <!-- App -->
-  <script src="/music/js/app.js"></script>  
+  <script src="/music/js/app.js"></script>
   <script src="/music/js/slimscroll/jquery.slimscroll.min.js"></script>
   <script src="/music/js/app.plugin.js"></script>
   <script type="text/javascript" src="/music/js/jPlayer/jquery.jplayer.min.js"></script>

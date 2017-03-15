@@ -130,7 +130,7 @@ module.exports = function(app) {
       email: req.body.email
     });
 
-    //检查用户名是否已经存在 
+    //检查用户名是否已经存在
     User.get(newUser.name, function(err, user) {
       if (user) {
         msg = {

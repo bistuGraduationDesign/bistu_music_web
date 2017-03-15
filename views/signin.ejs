@@ -103,8 +103,8 @@
 
             <form id='contact-form' name='contactForm' class='contact-form' data-toggle='validator' >
 
-              
-    
+
+
 
               <div class='form-group' >
                 <input type='text' class='form-control wow fadeInUp' data-wow-delay='.4s' id='name' placeholder='Name' required>
@@ -129,8 +129,8 @@
 
                   <div class='form-group' >
                   <img id = 'ccap' src="/verificationCode/1" class='form-control-ccap wow fadeInUp' alt="刷新" data-wow-delay='.8s' class="verCodePic" required>
-                  
-                    
+
+
                   </div>
 
                 </div>
@@ -239,7 +239,7 @@
                     "hideMethod": "fadeOut"
                   };
                   toastr.success(res1.info, "成功", opts);
-                  setTimeout("window.location.href = '/signin' ",3000);
+                  setTimeout("window.location.href = '/music' ",3000);
                 }
                 if (!res1.state) {
                   var opts = {
@@ -257,7 +257,7 @@
                     "hideMethod": "fadeOut"
                   };
                   toastr.error(res1.info, "失败", opts);
-                  setTimeout("window.location.href = '/signin' ",3000);
+                  //setTimeout("window.location.href = '/signin' ",3000);
                 }
                 // window.location = '/signin'
 
@@ -280,16 +280,16 @@
                 "hideMethod": "fadeOut"
               };
               toastr.error(res.info, "失败", opts);
-              setTimeout("window.location.href = '/signin' ",3000);
+              //setTimeout("window.location.href = '/signin' ",3000);
             }
-            
+
           }
         });
 
       }, false);
     })
     </script>
-    
+
     <script src='js/bootstrap.min.js' ></script>
     <script src="toastr/toastr.min.js"></script>
     <script src='http://cimply.co/js/jquery.magnific-popup.min.js' ></script>

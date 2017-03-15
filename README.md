@@ -1,2 +1,2 @@
 # bistu_music_web
-have fun
+bistu_music_web
