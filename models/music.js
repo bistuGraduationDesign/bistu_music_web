@@ -111,7 +111,7 @@ Music.getByHot = function(callback) {
       //查找用户名（name键）值为 name 一个文档
       collection.find([{
           type: type
-        }
+        },
         // First sort all the docs by name
         {
           $sort: {

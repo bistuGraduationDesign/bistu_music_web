@@ -39,7 +39,15 @@ $(document).ready(function(){
     keyEnabled: true,
     audioFullScreen: false
   });
-  
+
+  //test
+  myPlaylist.add({
+    title:"Cryptic Psyche",
+    artist:"ADG3",
+    mp3:"../musics/crypticpsyche.mp3",
+    poster: "images/m0.jpg"  
+  });
+
   $(document).on($.jPlayer.event.pause, myPlaylist.cssSelector.jPlayer,  function(){
     $('.musicbar').removeClass('animate');
     $('.jp-play-me').removeClass('active');
@@ -66,7 +74,7 @@ $(document).ready(function(){
       var i = Math.floor(Math.random() * (1 + 7 - 1));
       myPlaylist.play(i);
     }
-    
+
   });
 
 
