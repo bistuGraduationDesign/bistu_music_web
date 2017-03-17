@@ -170,7 +170,7 @@ module.exports = function(app) {
         }; //注册失败返回主册页
         return res.send(msg);
       }
-      
+
     });
     res.render("music", {});
   });

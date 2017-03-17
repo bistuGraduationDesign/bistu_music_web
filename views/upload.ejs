@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <!-- release v4.1.8, copyright 2014 - 2015 Kartik Visweswaran -->
-<html lang="en">
+<html >
     <head>
         <meta charset="UTF-8"/>
-        <title></title>
-        <link rel='stylesheet' type='text/css' href='css/bootstrap.min.css' >
-        <link href="css/fileinput.css" media="all" rel="stylesheet" type="text/css" >
-        <!-- <script src="js/jquery-3.1.1.min.js" type="text/javascript"></script> -->
-        <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
-        <script src="js/fileinput.js" type="text/javascript"></script>
-        <script src="js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="js/fileinput_locale_zh.js" type="text/javascript"></script>
+        <title>upload</title>
+        <link rel='stylesheet' type='text/css' href='//localhost:3001/css/bootstrap.min.css' >
+        <link href='//localhost:3001/css/fileinput.min.css' media="all" rel="stylesheet" type="text/css" >
+        <script src="//localhost:3001/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+        <!-- <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script> -->
+        <script src="//localhost:3001/js/fileinput.js" type="text/javascript"></script>
+        <script src="//localhost:3001/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="//localhost:3001/js/fileinput_locale_zh.js" type="text/javascript"></script>
     </head>
     <body>
-        <div class="container kv-main" >
+      <div class="container kv-main" >
             <h2>上传歌曲</h2>
             <br>
-            <form method="post">
+            <form id="music-info">
                 <div class="form-group">
                     <h3>填写歌曲信息</h3>
                     <br>
@@ -37,7 +37,7 @@
                       </select>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">上传</button>
+                <input id='bt1' type="button"class="btn btn-primary" value='上传'></input>
             </form>
             <form enctype="multipart/form-data" method="post" >
                 <div>
@@ -48,8 +48,39 @@
                 </div>
             </form>
         </div>
-    </body>
 	<script>
+
+    $('#bt1').on('click',()=>{
+        let data=$("#music-info").serializeArray();
+        let dataJson={};
+        let haveNull=false;
+        data.map((e)=>{
+          dataJson[e.name]=e.value;
+          if(!e.value){
+            haveNull=true;
+          }
+        });
+        if(haveNull){
+          alert("输入完整信息!");
+        }else {
+          $.ajax({
+            url: 'http://localhost:3001/upload',
+            type: 'POST',
+            dataType: 'json',
+            data:dataJson
+          })
+          .done(function() {
+            console.log("success");
+          })
+          .fail(function() {
+            console.log("error");
+          })
+          .always(function() {
+            console.log("complete");
+          });
+
+        }
+    });
 
     function fileinputInit(id,url,type){
       $("#"+id).fileinput({
@@ -73,4 +104,5 @@
 
 
 	</script>
+  </body>
 </html>
