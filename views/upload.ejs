@@ -11,8 +11,17 @@
         <script src="//localhost:3001/js/fileinput.js" type="text/javascript"></script>
         <script src="//localhost:3001/js/bootstrap.min.js" type="text/javascript"></script>
         <script src="//localhost:3001/js/fileinput_locale_zh.js" type="text/javascript"></script>
+        <style>
+          .alert{
+            position: fixed;
+            width: 100%;
+            display: none;
+          }
+        </style>
     </head>
     <body>
+      <div class="alert alert-success" role="alert" id='alertBox-success'>Success!</div>
+      <div class="alert alert-danger" role="alert" id='alertBox-danger'>Error!</div>
       <div class="container kv-main" >
             <h2>上传歌曲</h2>
             <br>
@@ -39,9 +48,10 @@
                 </div>
                 <input id='bt1' type="button"class="btn btn-primary" value='上传'></input>
             </form>
-            <form enctype="multipart/form-data" method="post" >
+            <form enctype="multipart/form-data" method="POST" >
                 <div>
                     <h3>选择歌曲文件</h3>
+                    <!-- <h4 style="color:red">注意！请确保文件名和上传的歌曲信息保持一致</h4> -->
                     <input id="file-1" type="file" multiple class="file" data-overwrite-initial="false" required="required">
                     <h3>选择歌曲封面</h3>
                     <input id="file-2" type="file" multiple class="file" data-overwrite-initial="false" required="required">
@@ -61,7 +71,8 @@
           }
         });
         if(haveNull){
-          alert("输入完整信息!");
+          $('#alertBox-danger').html('<b>错误!  </b>请输入全部信息。').fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
+
         }else {
           $.ajax({
             url: 'http://localhost:3001/upload',
@@ -69,11 +80,11 @@
             dataType: 'json',
             data:dataJson
           })
-          .done(function() {
-            console.log("success");
+          .done(function(res) {
+            res.state?$('#alertBox-success').html('<b>成功!  </b>').fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast'):$('#alertBox-danger').html('<b>错误!  </b>'+res.info).fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
           })
           .fail(function() {
-            console.log("error");
+            $('#alertBox-danger').html('<b>错误!  </b>请重试').fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
           })
           .always(function() {
             console.log("complete");
@@ -84,24 +95,26 @@
 
     function fileinputInit(id,url,type){
       $("#"+id).fileinput({
-          uploadUrl: url, // you must set a valid URL here else you will get an error
+          uploadUrl: url,
           language: 'zh', //设置语言
           //allowedFileExtensions : ['jpg', 'png','gif'],
           //overwriteInitial: false,
           maxFileSize: 5000,
-          maxFilesNum:1,
-          maxFilesCount: 1,
+          maxFileCount: 1,
+          showCaption:true,
           showUpload:true,
           allowedFileTypes: [type],
-          slugCallback: function(filename) {
-              return filename.replace('(', '_').replace(']', '_');
-          }
+          uploadExtraData: function(previewId, index) {
+              return {filename:$('#text-1').val()};
+          },
     	});
+      $('#'+id).on('filepreupload', function(event, previewId, index) {
+          console.log('File pre ajax triggered');
+      });
     }
 
-    fileinputInit("file-1","localhost:3001","audio");
-    fileinputInit("file-2","localhost:3001","image");
-
+    fileinputInit("file-1","http://localhost:3001/upload-file","audio");
+    fileinputInit("file-2","http://localhost:3001/upload-file","image");
 
 	</script>
   </body>
