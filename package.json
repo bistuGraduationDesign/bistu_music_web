@@ -13,6 +13,7 @@
     "mongodb":"*",
     "connect-mongo":"*",
     "ccap" : "^0.6.10",
-    "node-gyp" : "^3.4.0"
+    "node-gyp" : "^3.4.0",
+    "connect-multiparty": "~1.2.5"
   }
 }

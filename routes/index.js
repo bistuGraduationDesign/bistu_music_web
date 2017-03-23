@@ -3,6 +3,7 @@ var fs = require("fs");
 var crypto = require('crypto');
 //captcha
 var ccap = require('ccap');
+var multipart = require('connect-multiparty');
 
 var settings = require("../settings");
 var User = require("../models/user");
@@ -161,8 +162,8 @@ module.exports = function(app) {
   });
   app.get("/music", function(req, res) {
     console.log(req.session.user);
-    user = req.session.user;
-    Music.getgetByType(user.type, function(err, music) {
+    var user = req.session.user;
+    Music.getByType(user['type'], function(err, music) {
       if (err) {
         msg = {
           state: false,
@@ -179,42 +180,49 @@ module.exports = function(app) {
     res.render("upload", {});
   });
   //音乐名、作者、类型、次数
-  app.post("/upload", function(req, res) {
-    console.log(req);
+  app.post("/upload-file", multipart(), function(req, res) {
+    //get filename
+    var filename = req.files.files.originalFilename || path.basename(req.files.files.ws.path);
+    //copy file to a public directory
+    var targetPath = path.dirname(__filename) + '/public/' + filename;
+    //copy file
+    // fs.createReadStream(req.files.files.ws.path).pipe(fs.createWriteStream(targetPath));
+    console.log(filename);
+    console.log(targetPath);
+    console.log(JSON.stringify(req.body));
+    //   var newMusic = new Music({
+    //     name: name,
+    //     author: author,
+    //     type: type,
+    //     time: 0
+    //   });
 
-    var newMusic = new Music({
-      name: name,
-      author: author,
-      type: type,
-      time: 0
-    });
-
-    //检查用户名是否已经存在
-    Music.getByName(newMusic.name, function(err, music) {
-      if (music) {
-        msg = {
-          state: false,
-          info: "用户已存在"
-        };
-        return res.send(msg);
-      }
-      //如果不存在则新增用户
-      newMusic.save(function(err, music) {
-        if (err) {
-          msg = {
-            state: false,
-            info: "请重试"
-          }; //失败返回
-          return res.send(msg);
-        }
-        console.log(music);
-        msg = {
-          state: true,
-          info: "sussess"
-        };
-        return res.send(msg); //成功后返回
-      });
-    });
+    //   //检查用户名是否已经存在
+    //   Music.getByName(newMusic.name, function(err, music) {
+    //     if (music) {
+    //       msg = {
+    //         state: false,
+    //         info: "用户已存在"
+    //       };
+    //       return res.send(msg);
+    //     }
+    //     //如果不存在则新增用户
+    //     newMusic.save(function(err, music) {
+    //       if (err) {
+    //         msg = {
+    //           state: false,
+    //           info: "请重试"
+    //         }; //失败返回
+    //         return res.send(msg);
+    //       }
+    //       console.log(music);
+    //       msg = {
+    //         state: true,
+    //         info: "sussess"
+    //       };
+    //       return res.send(msg); //成功后返回
+    //     });
+    //   });
   });
 
   // app.get("/gameCenter", function(req, res) {
