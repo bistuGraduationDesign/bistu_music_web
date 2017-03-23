@@ -181,15 +181,30 @@ module.exports = function(app) {
   });
   //音乐名、作者、类型、次数
   app.post("/upload-file", multipart(), function(req, res) {
+    console.log(req.files);
     //get filename
-    var filename = req.files.files.originalFilename || path.basename(req.files.files.ws.path);
+    var filename = req.files.file_data.originalFilename;
     //copy file to a public directory
-    var targetPath = path.dirname(__filename) + '/public/' + filename;
+    var targetPath = path.dirname(__filename).substring(0,path.dirname(__filename).lastIndexOf("/")) + '/public/updata/' + filename;
     //copy file
-    // fs.createReadStream(req.files.files.ws.path).pipe(fs.createWriteStream(targetPath));
-    console.log(filename);
-    console.log(targetPath);
-    console.log(JSON.stringify(req.body));
+    // stream = fs.createWriteStream(path.join(upload_dir, name));
+
+    const readStream = fs.createReadStream(req.files.file_data.ws.path);
+    const writeStream = fs.createWriteStream(targetPath, {
+      flags: 'w',
+
+      encoding: null,
+
+      mode: 0666
+    });
+    readStream.pipe(writeStream);
+    readStream.on('error', (error) => {
+      console.log('readStream error', error.message);
+    })
+    writeStream.on('error', (error) => {
+      console.log('writeStream error', error.message);
+    })
+
     //   var newMusic = new Music({
     //     name: name,
     //     author: author,
