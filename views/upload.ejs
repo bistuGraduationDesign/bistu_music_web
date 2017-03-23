@@ -4,13 +4,13 @@
     <head>
         <meta charset="UTF-8"/>
         <title>upload</title>
-        <link rel='stylesheet' type='text/css' href='//localhost:3001/css/bootstrap.min.css' >
-        <link href='//localhost:3001/css/fileinput.min.css' media="all" rel="stylesheet" type="text/css" >
-        <script src="//localhost:3001/js/jquery-3.1.1.min.js" type="text/javascript"></script>
+        <link rel='stylesheet' type='text/css' href='/css/bootstrap.min.css' >
+        <link href='/css/fileinput.min.css' media="all" rel="stylesheet" type="text/css" >
+        <script src="/js/jquery-3.1.1.min.js" type="text/javascript"></script>
         <!-- <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script> -->
-        <script src="//localhost:3001/js/fileinput.js" type="text/javascript"></script>
-        <script src="//localhost:3001/js/bootstrap.min.js" type="text/javascript"></script>
-        <script src="//localhost:3001/js/fileinput_locale_zh.js" type="text/javascript"></script>
+        <script src="/js/fileinput.js" type="text/javascript"></script>
+        <script src="/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/js/fileinput_locale_zh.js" type="text/javascript"></script>
         <style>
           .alert{
             position: fixed;
@@ -75,7 +75,7 @@
 
         }else {
           $.ajax({
-            url: 'http://localhost:3001/upload',
+            url: '/upload',
             type: 'POST',
             dataType: 'json',
             data:dataJson
@@ -113,8 +113,8 @@
       });
     }
 
-    fileinputInit("file-1","http://localhost:3001/upload-file","audio");
-    fileinputInit("file-2","http://localhost:3001/upload-file","image");
+    fileinputInit("file-1","/upload-file","audio");
+    fileinputInit("file-2","/upload-file","image");
 
 	</script>
   </body>
