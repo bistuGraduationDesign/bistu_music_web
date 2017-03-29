@@ -46,23 +46,26 @@
                       </select>
                     </div>
                 </div>
-                <input id='bt1' type="button"class="btn btn-primary" value='上传'></input>
             </form>
             <form enctype="multipart/form-data" method="POST" >
                 <div>
-                    <h3>选择歌曲文件</h3>
+                    <h3>选择歌曲文件和封面</h3>
                     <!-- <h4 style="color:red">注意！请确保文件名和上传的歌曲信息保持一致</h4> -->
                     <input id="file-1" type="file" multiple class="file" data-overwrite-initial="false" required="required">
-                    <h3>选择歌曲封面</h3>
-                    <input id="file-2" type="file" multiple class="file" data-overwrite-initial="false" required="required">
+
                 </div>
             </form>
+            <br>
+            <input id='bt1' type="button"class="btn btn-primary" value='上传'></input>
         </div>
 	<script>
+    function alertMsg(type,msg){
+      $('#alertBox-'+type).html('<b>错误!  </b>'+msg).fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
+    }
 
+    var dataJson={};
     $('#bt1').on('click',()=>{
         let data=$("#music-info").serializeArray();
-        let dataJson={};
         let haveNull=false;
         data.map((e)=>{
           dataJson[e.name]=e.value;
@@ -71,50 +74,63 @@
           }
         });
         if(haveNull){
-          $('#alertBox-danger').html('<b>错误!  </b>请输入全部信息。').fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
+          alertMsg('danger','请输入全部信息');
 
+        // }else if (!haveAud||!haveImg) {
+        //   alertMsg('danger','确保文件有一个歌曲和一个封面');
         }else {
-          $.ajax({
-            url: '/upload',
-            type: 'POST',
-            dataType: 'json',
-            data:dataJson
-          })
-          .done(function(res) {
-            res.state?$('#alertBox-success').html('<b>成功!  </b>').fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast'):$('#alertBox-danger').html('<b>错误!  </b>'+res.info).fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
-          })
-          .fail(function() {
-            $('#alertBox-danger').html('<b>错误!  </b>请重试').fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
-          })
-          .always(function() {
-            console.log("complete");
-          });
-
+        //   $.ajax({
+        //     url: '/upload',
+        //     type: 'POST',
+        //     dataType: 'json',
+        //     data:dataJson
+        //   })
+        //   .done(function(res) {
+        //     res.state?$('#alertBox-success').html('<b>成功!  </b>').fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast'):$('#alertBox-danger').html('<b>错误!  </b>'+res.info).fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
+        //   })
+        //   .fail(function() {
+        //     $('#alertBox-danger').html('<b>错误!  </b>请重试').fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
+        //   })
+        //   .always(function() {
+        //     console.log("complete");
+        //   });
+        //
+        $('#file-1').fileinput('upload');
         }
+
     });
 
-    function fileinputInit(id,url,type){
+    function fileinputInit(id,url){
       $("#"+id).fileinput({
           uploadUrl: url,
           language: 'zh', //设置语言
           //allowedFileExtensions : ['jpg', 'png','gif'],
           //overwriteInitial: false,
           maxFileSize: 5000,
-          maxFileCount: 1,
+          maxFileCount: 2,
+          minFileCount: 2,
           showCaption:true,
-          showUpload:true,
-          allowedFileTypes: [type],
+          showUpload:false,
+          allowedFileTypes: ['audio','image'],
           uploadExtraData: function(previewId, index) {
-              return {filename:$('#text-1').val()};
+              return dataJson;
           },
     	});
-      $('#'+id).on('filepreupload', function(event, previewId, index) {
-          console.log('File pre ajax triggered');
+
+      $('#'+id).on('fileuploaded', function(event, data,previewId, index) {
+          console.log('File fileuploaded triggered');
+          console.log(data);
+          $('#'+id).fileinput('reset');
       });
+      $('#'+id).on('fileuploaderror', function(event,data,msg) {
+          console.log('File fileuploaderror triggered');
+          console.log(data);
+          console.log(msg);
+      });
+
     }
 
-    fileinputInit("file-1","/upload-file","audio");
-    fileinputInit("file-2","/upload-file","image");
+    fileinputInit("file-1","/upload-file");
 
 	</script>
   </body>

@@ -1,34 +1,9 @@
-$(document).ready(function(){
+//$(document).ready(function(){
 
   var myPlaylist = new jPlayerPlaylist({
     jPlayer: "#jplayer_N",
     cssSelectorAncestor: "#jp_container_N"
-  }, [
-    {
-      title:"Busted Chump",
-      artist:"ADG3",
-      mp3:"../musics/bustedchump.mp3",
-      poster: "images/m0.jpg"
-    },
-    {
-      title:"Chucked Knuckles",
-      artist:"3studios",
-      mp3:"../musics/chuckedknuckles.mp3",
-      poster: "images/m0.jpg"
-    },
-    {
-      title:"Cloudless Days",
-      artist:"ADG3 Studios",
-      mp3:"../musics/cloudlessdays.mp3",
-      poster: "images/m0.jpg"
-    },
-    {
-      title:"Cryptic Psyche",
-      artist:"ADG3",
-      mp3:"../musics/crypticpsyche.mp3",
-      poster: "images/m0.jpg"
-    }
-  ], {
+  }, [  ], {
     playlistOptions: {
       enableRemoveControls: true,
       autoPlay: true
@@ -40,13 +15,7 @@ $(document).ready(function(){
     audioFullScreen: false
   });
 
-  //test
-  myPlaylist.add({
-    title:"Cryptic Psyche",
-    artist:"ADG3",
-    mp3:"../musics/crypticpsyche.mp3",
-    poster: "images/m0.jpg"  
-  });
+
 
   $(document).on($.jPlayer.event.pause, myPlaylist.cssSelector.jPlayer,  function(){
     $('.musicbar').removeClass('animate');
@@ -81,26 +50,26 @@ $(document).ready(function(){
 
   // video
 
-  $("#jplayer_1").jPlayer({
-    ready: function () {
-      $(this).jPlayer("setMedia", {
-        title: "Big Buck Bunny",
-        m4v: "http://flatfull.com/themes/assets/video/big_buck_bunny_trailer.m4v",
-        ogv: "http://flatfull.com/themes/assets/video/big_buck_bunny_trailer.ogv",
-        webmv: "http://flatfull.com/themes/assets/video/big_buck_bunny_trailer.webm",
-        poster: "images/m41.jpg"
-      });
-    },
-    swfPath: "js",
-    supplied: "webmv, ogv, m4v",
-    size: {
-      width: "100%",
-      height: "auto",
-      cssClass: "jp-video-360p"
-    },
-    globalVolume: true,
-    smoothPlayBar: true,
-    keyEnabled: true
-  });
+  // $("#jplayer_N").jPlayer({
+  //   ready: function () {
+  //     $(this).jPlayer("setMedia", {
+  //       title: "Big Buck Bunny",
+  //       m4v: "http://flatfull.com/themes/assets/video/big_buck_bunny_trailer.m4v",
+  //       ogv: "http://flatfull.com/themes/assets/video/big_buck_bunny_trailer.ogv",
+  //       webmv: "http://flatfull.com/themes/assets/video/big_buck_bunny_trailer.webm",
+  //       poster: "images/m41.jpg"
+  //     });
+  //   },
+  //   swfPath: "js",
+  //   supplied: "webmv, ogv, m4v,mp3",
+  //   size: {
+  //     width: "100%",
+  //     height: "auto",
+  //     cssClass: "jp-video-360p"
+  //   },
+  //   globalVolume: true,
+  //   smoothPlayBar: true,
+  //   keyEnabled: true
+  // });
 
-});
+//});
