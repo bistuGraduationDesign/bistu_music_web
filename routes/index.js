@@ -192,9 +192,7 @@ module.exports = function(app) {
     const readStream = fs.createReadStream(req.files.file_data.ws.path);
     const writeStream = fs.createWriteStream(targetPath, {
       flags: 'w',
-
       encoding: null,
-
       mode: 0666
     });
     readStream.pipe(writeStream);
