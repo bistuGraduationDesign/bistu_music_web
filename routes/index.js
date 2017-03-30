@@ -161,6 +161,7 @@ module.exports = function(app) {
       });
     });
   });
+
   app.get("/music", function(req, res) {
     console.log(req.session.user);
     var user = req.session.user;
@@ -202,7 +203,7 @@ module.exports = function(app) {
         //get filename
         var filename = req.body.name + "." + req.files.file_data.type.split("/")[1];
         //copy file to a public directory
-        var targetPath = path.dirname(__filename).substring(0, path.dirname(__filename).lastIndexOf("/")) + '/updata/musics' + filename;
+        var targetPath = path.dirname(__filename).substring(0, path.dirname(__filename).lastIndexOf("/")) + '/public/updata/musics' + filename;
         //copy file
         // stream = fs.createWriteStream(path.join(upload_dir, name));
         const readStream = fs.createReadStream(req.files.file_data.path);
