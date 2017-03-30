@@ -1,9 +1,10 @@
 var path = require("path");
 var fs = require("fs");
-var crypto = require('crypto');
+var crypto = require("crypto");
 //captcha
-var ccap = require('ccap');
-var multipart = require('connect-multiparty');
+var ccap = require("ccap");
+var multipart = require("connect-multiparty");
+var async = require("async");
 
 var settings = require("../settings");
 var User = require("../models/user");
@@ -179,63 +180,94 @@ module.exports = function(app) {
   app.get("/upload", function(req, res) {
     res.render("upload", {});
   });
-  //音乐名、作者、类型、次数
+
   app.post("/upload-file", multipart(), function(req, res) {
+    console.log(req.body);
     console.log(req.files);
-    //get filename
-    var filename = req.files.file_data.originalFilename;
-    //copy file to a public directory
-    var targetPath = path.dirname(__filename).substring(0,path.dirname(__filename).lastIndexOf("/")) + '/public/updata/' + filename;
-    //copy file
-    // stream = fs.createWriteStream(path.join(upload_dir, name));
-
-    const readStream = fs.createReadStream(req.files.file_data.ws.path);
-    const writeStream = fs.createWriteStream(targetPath, {
-      flags: 'w',
-      encoding: null,
-      mode: 0666
+    async.waterfall([
+      function(callback) {
+        Music.getByName(req.body.name, function(err, music) {
+          console.log("err: " + err);
+          console.log("music: " + music);
+          if (music) {
+            callback("歌曲已存在");
+          } else if (err) {
+            callback("请重试");
+          } else {
+            callback(null);
+          }
+        })
+      },
+      function(callback) {
+        //get filename
+        var filename = req.body.name + "." + req.files.file_data.type.split("/")[1];
+        //copy file to a public directory
+        var targetPath = path.dirname(__filename).substring(0, path.dirname(__filename).lastIndexOf("/")) + '/updata/musics' + filename;
+        //copy file
+        // stream = fs.createWriteStream(path.join(upload_dir, name));
+        const readStream = fs.createReadStream(req.files.file_data.path);
+        const writeStream = fs.createWriteStream(targetPath, {
+          flags: 'w',
+          encoding: null,
+          mode: 0666
+        });
+        readStream.pipe(writeStream);
+        readStream.on('error', (error) => {
+          // console.log('readStream error', error.message);
+          callback(error.message);
+        })
+        writeStream.on('error', (error) => {
+          // console.log('writeStream error', error.message);
+          callback(error.message);
+        })
+        readStream.on('end', function() {
+          callback(null)
+        })
+      },
+      function(callback) {
+        var type = 3;
+        //摇滚1 民谣2 流行3
+        switch (req.body.type) {
+          case "摇滚":
+            type = 1;
+            break;
+          case "民谣":
+            type = 2;
+            break;
+          case "流行":
+            type = 3;
+            break;
+        }
+        //音乐名、作者、类型、次数
+        var newMusic = new Music({
+          name: req.body.name,
+          author: req.body.author,
+          type: type,
+          time: 0
+        });
+        //如果不存在则新增用户
+        newMusic.save(function(err, music) {
+          if (err) {
+            callback("请重试");
+          }
+          callback(null); //成功后返回
+        });
+      }
+    ], function(err, result) {
+      console.log("err e: " + err);
+      if (err) {
+        msg = {
+          state: false,
+          info: err
+        }; //注册失败返回主册页
+      } else {
+        msg = {
+          state: true,
+          info: "sussess"
+        };
+      }
+      return res.send(msg);
     });
-    readStream.pipe(writeStream);
-    readStream.on('error', (error) => {
-      console.log('readStream error', error.message);
-    })
-    writeStream.on('error', (error) => {
-      console.log('writeStream error', error.message);
-    })
-
-    //   var newMusic = new Music({
-    //     name: name,
-    //     author: author,
-    //     type: type,
-    //     time: 0
-    //   });
-
-    //   //检查用户名是否已经存在
-    //   Music.getByName(newMusic.name, function(err, music) {
-    //     if (music) {
-    //       msg = {
-    //         state: false,
-    //         info: "用户已存在"
-    //       };
-    //       return res.send(msg);
-    //     }
-    //     //如果不存在则新增用户
-    //     newMusic.save(function(err, music) {
-    //       if (err) {
-    //         msg = {
-    //           state: false,
-    //           info: "请重试"
-    //         }; //失败返回
-    //         return res.send(msg);
-    //       }
-    //       console.log(music);
-    //       msg = {
-    //         state: true,
-    //         info: "sussess"
-    //       };
-    //       return res.send(msg); //成功后返回
-    //     });
-    //   });
   });
 
   // app.get("/gameCenter", function(req, res) {
