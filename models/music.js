@@ -115,7 +115,7 @@ Music.getByHot = function(callback) {
         // First sort all the docs by name
         {
           $sort: {
-            name: 1
+            times: 1
           }
         },
         // Take the first 100 of those
@@ -127,7 +127,44 @@ Music.getByHot = function(callback) {
         if (err) {
           return callback(err); //失败！返回 err
         }
-        callback(null, musics); //成功！返回查询的用户信息
+        callback(null, musics); //成功！返回查询的信息
+      });
+    });
+  });
+};
+
+Music.getByTime = function(callback) {
+  //打开数据库
+  mongodb.open(function(err, db) {
+    if (err) {
+      return callback(err); //错误，返回 err 信息
+    }
+    //读取 musics 集合
+    db.collection('musics', function(err, collection) {
+      if (err) {
+        mongodb.close();
+        return callback(err); //错误，返回 err 信息
+      }
+      //查找用户名（name键）值为 name 一个文档
+      collection.find([{
+          type: type
+        },
+        // First sort all the docs by name
+        {
+          $sort: {
+            time: 1
+          }
+        },
+        // Take the first 100 of those
+        {
+          $limit: 12
+        }
+      ], function(err, musics) {
+        mongodb.close();
+        if (err) {
+          return callback(err); //失败！返回 err
+        }
+        callback(null, musics); //成功！返回查询的信息
       });
     });
   });

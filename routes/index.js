@@ -165,17 +165,49 @@ module.exports = function(app) {
   app.get("/music", function(req, res) {
     console.log(req.session.user);
     var user = req.session.user;
-    Music.getByType(user['type'], function(err, music) {
+    // an example using an object instead of an array
+    async.parallel({
+      getByType: function(callback) {
+        Music.getByType(user['type'], function(err, music) {
+          if (err) {
+            callback("请重试", null);
+          }else{
+            callback(null, music);
+          }
+        });
+      },
+      getByHot: function(callback) {
+        Music.getByHot(function(err, music) {
+          if (err) {
+            callback("请重试", null);
+          }else{
+            callback(null, music);
+          }
+        });
+      },
+      getByTime: function(callback) {
+        Music.getByTime(function(err, music) {
+          if (err) {
+            callback("请重试", null);
+          }else{
+            callback(null, music);
+          }
+        });
+      }
+    }, function(err, results) {
       if (err) {
         msg = {
           state: false,
-          info: "请重试"
+          info: err
         }; //注册失败返回主册页
         return res.send(msg);
+      } else {
+         res.render("music", results);
       }
-
+      // results is now equals to: {one: 1, two: 2}
     });
-    res.render("music", {});
+
+   
   });
 
   app.get("/upload", function(req, res) {
