@@ -171,7 +171,7 @@ module.exports = function(app) {
         Music.getByType(user['type'], function(err, music) {
           if (err) {
             callback("请重试", null);
-          }else{
+          } else {
             callback(null, music);
           }
         });
@@ -180,7 +180,7 @@ module.exports = function(app) {
         Music.getByHot(function(err, music) {
           if (err) {
             callback("请重试", null);
-          }else{
+          } else {
             callback(null, music);
           }
         });
@@ -189,7 +189,7 @@ module.exports = function(app) {
         Music.getByTime(function(err, music) {
           if (err) {
             callback("请重试", null);
-          }else{
+          } else {
             callback(null, music);
           }
         });
@@ -202,12 +202,12 @@ module.exports = function(app) {
         }; //注册失败返回主册页
         return res.send(msg);
       } else {
-         res.render("music", results);
+        res.render("music", results);
       }
       // results is now equals to: {one: 1, two: 2}
     });
 
-   
+
   });
 
   app.get("/upload", function(req, res) {
@@ -232,30 +232,42 @@ module.exports = function(app) {
         })
       },
       function(callback) {
-        //get filename
-        var filename = req.body.name + "." + req.files.file_data.type.split("/")[1];
-        //copy file to a public directory
-        var targetPath = path.dirname(__filename).substring(0, path.dirname(__filename).lastIndexOf("/")) + '/public/updata/musics' + filename;
-        //copy file
-        // stream = fs.createWriteStream(path.join(upload_dir, name));
-        const readStream = fs.createReadStream(req.files.file_data.path);
-        const writeStream = fs.createWriteStream(targetPath, {
-          flags: 'w',
-          encoding: null,
-          mode: 0666
-        });
-        readStream.pipe(writeStream);
-        readStream.on('error', (error) => {
-          // console.log('readStream error', error.message);
-          callback(error.message);
-        })
-        writeStream.on('error', (error) => {
-          // console.log('writeStream error', error.message);
-          callback(error.message);
-        })
-        readStream.on('end', function() {
-          callback(null)
-        })
+        var fileData = req.files.file_data
+
+        if (fileData[0].type.indexOf("image") >= 0 && fileData[1].type.indexOf("audio") >= 0) {
+          upload(req, 0, 'images', function(err) {
+            if (err) {
+              callback(err)
+            } else {
+              upload(req, 1, 'musics', function(err) {
+                if (err) {
+                  callback(err)
+                } else {
+                  callback(null)
+                }
+              })
+            }
+          })
+
+        } else if (fileData[1].type.indexOf("image") >= 0 && fileData[0].type.indexOf("audio") >= 0) {
+          upload(req, 1, 'images', function(err) {
+            if (err) {
+              callback(err)
+            } else {
+              upload(req, 0, 'musics', function(err) {
+                if (err) {
+                  callback(err)
+                } else {
+                  callback(null)
+                }
+              })
+            }
+          })
+
+        } else {
+          callback("err type")
+        }
+
       },
       function(callback) {
         var type = 3;
@@ -275,8 +287,7 @@ module.exports = function(app) {
         var newMusic = new Music({
           name: req.body.name,
           author: req.body.author,
-          type: type,
-          time: 0
+          type: type
         });
         //如果不存在则新增用户
         newMusic.save(function(err, music) {
@@ -303,6 +314,7 @@ module.exports = function(app) {
     });
   });
 
+
   // app.get("/gameCenter", function(req, res) {
   //   res.render("gameCenter", {});
   // });
@@ -311,3 +323,30 @@ module.exports = function(app) {
   //   res.render("jdInfo", {});
   // });
 };
+
+function upload(req, tag, name, callback) {
+  //get filename
+  var filename = req.body.name + "." + req.files.file_data[tag].type.split("/")[1];
+  //copy file to a public directory
+  var targetPath = path.dirname(__filename).substring(0, path.dirname(__filename).lastIndexOf("/")) + '/public/updata/' + name + "/" + filename;
+  //copy file
+  // stream = fs.createWriteStream(path.join(upload_dir, name));
+  const readStream = fs.createReadStream(req.files.file_data[tag].path);
+  const writeStream = fs.createWriteStream(targetPath, {
+    flags: 'w',
+    encoding: null,
+    mode: 0666
+  });
+  readStream.pipe(writeStream);
+  readStream.on('error', (error) => {
+    // console.log('readStream error', error.message);
+    callback(error.message);
+  })
+  writeStream.on('error', (error) => {
+    // console.log('writeStream error', error.message);
+    callback(error.message);
+  })
+  readStream.on('end', function() {
+    callback(null)
+  })
+}

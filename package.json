@@ -10,7 +10,7 @@
   	"body-parser": "~1.13.2",
     "express": "3.4.8",
     "ejs": "*",
-    "mongodb":"*",
+    "mongodb": "^2.0.*",
     "connect-mongo":"*",
     "ccap" : "^0.6.10",
     "node-gyp" : "^3.4.0",
