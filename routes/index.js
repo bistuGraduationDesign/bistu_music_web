@@ -265,7 +265,7 @@ module.exports = function(app) {
           })
 
         } else {
-          callback("err type")
+          callback("请输入一个视频、一个图片，么么哒")
         }
 
       },
