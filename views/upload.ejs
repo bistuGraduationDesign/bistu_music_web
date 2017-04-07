@@ -106,6 +106,7 @@
           language: 'zh', //设置语言
           //allowedFileExtensions : ['jpg', 'png','gif'],
           //overwriteInitial: false,
+          uploadAsync: false,
           maxFileSize: 5000,
           maxFileCount: 2,
           minFileCount: 2,
@@ -118,8 +119,7 @@
     	});
 
       $('#'+id).on('fileuploaded', function(event, data,previewId, index) {
-          console.log('File fileuploaded triggered');
-          console.log(data);
+          alert('uploaded!');
           $('#'+id).fileinput('reset');
       });
       $('#'+id).on('fileuploaderror', function(event,data,msg) {
