@@ -301,8 +301,7 @@ module.exports = function(app) {
       console.log("err e: " + err);
       if (err) {
         msg = {
-          state: false,
-          info: err
+          "error:" + err
         }; //注册失败返回主册页
       } else {
         msg = {
