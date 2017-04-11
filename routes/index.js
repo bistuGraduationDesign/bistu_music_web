@@ -1,8 +1,8 @@
 var path = require("path");
 var fs = require("fs");
-var crypto = require("crypto");
+var crypto = require("crypto");//加密算法
 //captcha
-var ccap = require("ccap");
+var ccap = require("ccap");//验证码
 var multipart = require("connect-multiparty");
 var async = require("async");
 
@@ -29,13 +29,13 @@ function changeVerCode(req, res) {
 }
 
 function checkVerCode(req, res) {
+    console.log("checkVerCode:" + req.body.verCode);
+    console.log("checkVerCode:" + req.body.verCode.toUpperCase());
+    console.log("checkVerCode:" + req.session.verCode.substring(0, 4));
   var msg;
   console.log(req.body.verCode);
   console.log(req.session.verCode);
   if (req.session.verCode) {
-    console.log("checkVerCode:" + req.body.verCode);
-    console.log("checkVerCode:" + req.body.verCode.toUpperCase());
-    console.log("checkVerCode:" + req.session.verCode.substring(0, 4));
     if (req.body.verCode.toUpperCase() == req.session.verCode.substring(0, 4)) {
       msg = {
         state: true,
@@ -114,7 +114,6 @@ module.exports = function(app) {
       var password_re = req.body['passwordrepeat'];
       //检验用户两次输入的密码是否一致
       if (password_re != password) {
-        console.log("in");
         msg = {
           state: false,
           info: "两次输入的密码是不一致"
@@ -124,9 +123,7 @@ module.exports = function(app) {
       // 生成密码的 md5 值
       var md5 = crypto.createHash('md5');
       var password = md5.update(req.body.password).digest('hex');
-      console.log(req.body.name);
-      console.log(password);
-      console.log(req.body.email);
+
       var newUser = new User({
         name: req.body.name,
         password: password,

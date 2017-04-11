@@ -82,7 +82,9 @@ Music.getByType = function(type, callback) {
         return callback(err); //错误，返回 err 信息
       }
       //返回只包含 name、time、title 属性的文档组成的存档数组
-      collection.find({}, {
+      collection.find({
+        "type": type
+      }, {
         limit: 12
       }).toArray(function(err, musics) {
         mongodb.close();
