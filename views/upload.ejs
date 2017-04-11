@@ -60,7 +60,16 @@
         </div>
 	<script>
     function alertMsg(type,msg){
-      $('#alertBox-'+type).html('<b>错误!  </b>'+msg).fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
+      let state;
+      switch (type) {
+        case 'success':
+          state='成功'
+          break;
+        case 'danger':
+          state='错误'
+          break;
+      }
+      $('#alertBox-'+type).html(`<b>${state}!  </b>${msg}`).fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
     }
 
     var dataJson={};
@@ -118,16 +127,19 @@
           },
     	});
 
-      $('#'+id).on('fileuploaded', function(event, data,previewId, index) {
-          alert('uploaded!');
-          $('#'+id).fileinput('reset');
-      });
-      $('#'+id).on('fileuploaderror', function(event,data,msg) {
-          console.log('File fileuploaderror triggered');
-          console.log(data);
-          console.log(msg);
-      });
-
+      // $('#'+id).on('fileuploaded', function(event, data,previewId, index) {
+      //     alert('uploaded!');
+      //     $('#'+id).fileinput('reset');
+      // });
+      // $('#'+id).on('fileuploaderror', function(event,data,msg) {
+      //     console.log('File fileuploaderror triggered');
+      //     console.log(data);
+      //     console.log(msg);
+      // });
+      $('#'+id).on('filebatchuploadsuccess',function(event,data){
+        console.debug(data);
+        alertMsg('success','音乐已上传。');
+      })
     }
 
     fileinputInit("file-1","/upload-file");
