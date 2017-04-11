@@ -4,7 +4,8 @@ function User(user) {
   this.name = user.name;
   this.email = user.email;
   this.password = user.password;
-  this.type = 3 //摇滚1 民谣2 流行3
+  this.type = 3; //摇滚1 民谣2 流行3
+  this.authority = 0;//用户0 管理1
 };
 
 module.exports = User;
@@ -14,11 +15,12 @@ User.prototype.save = function(callback) {
   var date = new Date(Date.now() + (8 * 60 * 60 * 1000));
 
   var user = {
-    name: this.name,
-    email: this.email,
-    password: this.password,
-    type: this.type,
-    time: date
+    name: this.name,//用户名
+    email: this.email,//用户邮箱
+    password: this.password,//密码，md5加密后
+    type: this.type,//用户类型，用于用户聚类
+    time: date,//注册时间
+    authority: this.authority
   };
   //打开数据库
   mongodb.open(function(err, db) {
