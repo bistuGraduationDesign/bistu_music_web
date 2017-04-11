@@ -12,3 +12,7 @@ settings.js
 settings.js
 
 routes/index.js
+
+public/updata/
+
+.gitignore
