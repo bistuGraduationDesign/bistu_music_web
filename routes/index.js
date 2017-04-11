@@ -53,7 +53,7 @@ function checkVerCode(req, res) {
 };
 
 module.exports = function(app) {
-    
+
     app.get("/", function(req, res) {
       res.render("index", {});
     });
@@ -203,7 +203,11 @@ module.exports = function(app) {
           }; //注册失败返回主册页
           return res.send(msg);
         } else {
-          res.render("music", Typemusic, Hotmusic, Timemusic);
+          res.render("music", {
+            Typemusic:Typemusic,
+            Hotmusic:Hotmusic, 
+            Timemusic:Timemusic
+          });
         }
       });
 

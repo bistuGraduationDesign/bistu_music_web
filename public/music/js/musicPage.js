@@ -1,82 +1,31 @@
-var discoverMusicList=[//16
-  {
-    title:"Busted Chump",
-    artist:"ADG3",
-    mp3:"../musics/bustedchump.mp3",
-    poster: "/images/p3.jpg"
-  },
-  {
-    title:"Chucked Knuckles",
-    artist:"3studios",
-    mp3:"../musics/chuckedknuckles.mp3",
-    poster: "/images/p5.jpg"
-  },
-  {
-    title:"Cloudless Days",
-    artist:"ADG3 Studios",
-    mp3:"../musics/cloudlessdays.mp3",
-    poster: "/images/p6.jpg"
-  },
-  {
-    title:"Cryptic Psyche",
-    artist:"ADG3",
-    mp3:"../musics/crypticpsyche.mp3",
-    poster: "/images/p7.jpg"
-  }
-];
+console.debug(dataset);
+var discoverMusicList=[];
+var topsongsMusicList=[];
+var newsongsMusicList=[];
 
-var topsongsMusicList=[//5
-  {
-    title:"Busted Chump",
-    artist:"ADG3",
-    mp3:"../musics/bustedchump.mp3",
-    poster: "/images/p3.jpg"
-  },
-  {
-    title:"Chucked Knuckles",
-    artist:"3studios",
-    mp3:"../musics/chuckedknuckles.mp3",
-    poster: "/images/p5.jpg"
-  },
-  {
-    title:"Cloudless Days",
-    artist:"ADG3 Studios",
-    mp3:"../musics/cloudlessdays.mp3",
-    poster: "/images/p6.jpg"
-  },
-  {
-    title:"Cryptic Psyche",
-    artist:"ADG3",
-    mp3:"../musics/crypticpsyche.mp3",
-    poster: "/images/p7.jpg"
+dataset.Typemusic.map((music)=>{
+    discoverMusicList.push(translate(music));
+});
+dataset.Hotmusic.map((music)=>{
+    topsongsMusicList.push(translate(music));
+});
+dataset.Timemusic.map((music)=>{
+    newsongsMusicList.push(translate(music));
+});
+
+console.debug(discoverMusicList);
+console.debug(topsongsMusicList);
+console.debug(newsongsMusicList);
+
+//歌曲对象格式转换
+function translate(music){
+  return {
+    title:music.name,
+    artist:music.author,
+    mp3:`/updata/musics/${music.name}.mp3`,
+    poster:`/updata/images/${music.name}.jpeg`
   }
-]
-var newsongsMusicList=[//8
-  {
-    title:"Busted Chump",
-    artist:"ADG3",
-    mp3:"../musics/bustedchump.mp3",
-    poster: "/images/p3.jpg"
-  },
-  {
-    title:"Chucked Knuckles",
-    artist:"3studios",
-    mp3:"../musics/chuckedknuckles.mp3",
-    poster: "/images/p5.jpg"
-  },
-  {
-    title:"Cloudless Days",
-    artist:"ADG3 Studios",
-    mp3:"../musics/cloudlessdays.mp3",
-    poster: "/images/p6.jpg"
-  },
-  {
-    title:"Cryptic Psyche",
-    artist:"ADG3",
-    mp3:"../musics/crypticpsyche.mp3",
-    poster: "/images/p7.jpg"
-  }
-]
+}
 //全局变量
 var playingIndex;
 
