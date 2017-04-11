@@ -153,40 +153,41 @@ Music.getByTime = function(callback) {
 
 //更新一篇文章及其相关信息
 Music.addTimes = function(name, callback) {
-    //打开数据库
-    mongodb.open(function(err, db) {
+  //打开数据库
+  mongodb.open(function(err, db) {
+    if (err) {
+      return callback(err);
+    }
+    //读取 posts 集合
+    db.collection('musics', function(err, collection) {
+      if (err) {
+        mongodb.close();
+        return callback(err);
+      }
+
+      collection.findOne({
+        "name": name
+      }, function(err, music) {
+        if (err) {
+          mongodb.close();
+          return callback(err);
+        }
+        music.times = music.times++;
+        //更新文章内容
+        collection.update({
+          "name": name
+        }, {
+          $set: {
+            music: music
+          }
+        }, function(err) {
+          mongodb.close();
           if (err) {
             return callback(err);
           }
-          //读取 posts 集合
-          db.collection('musics', function(err, collection) {
-            if (err) {
-              mongodb.close();
-              return callback(err);
-            }
-
-            collection.findOne({
-              "name": name
-            }, function(err, music) {
-              if (err) {
-                mongodb.close();
-                return callback(err);
-              }
-              music.times = music.times++;
-              //更新文章内容
-              collection.update({
-                "name": name
-              }, {
-                $set: {
-                  music: music
-                }
-              }, function(err) {
-                mongodb.close();
-                if (err) {
-                  return callback(err);
-                }
-                callback(null);
-              });
-            });
-          });
-        };
+          callback(null);
+        });
+      });
+    });
+  });
+}

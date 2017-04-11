@@ -53,6 +53,7 @@ function checkVerCode(req, res) {
 };
 
 module.exports = function(app) {
+    
     app.get("/", function(req, res) {
       res.render("index", {});
     });
@@ -361,4 +362,5 @@ module.exports = function(app) {
       readStream.on('end', function() {
         callback(null)
       })
-    }
+    };
+  }
