@@ -4,8 +4,15 @@
     <head>
         <meta charset="UTF-8"/>
         <title>upload</title>
+        <meta name="description" content="app, web app, responsive, admin dashboard, admin, flat, flat ui, ui kit, off screen nav" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <link rel='stylesheet' type='text/css' href='/css/bootstrap.min.css' >
         <link href='/css/fileinput.min.css' media="all" rel="stylesheet" type="text/css" >
+        <link rel="stylesheet" href="/music/css/animate.css" type="text/css" />
+        <link rel="stylesheet" href="/music/css/font-awesome.min.css" type="text/css" />
+        <link rel="stylesheet" href="/music/css/simple-line-icons.css" type="text/css" />
+        <link rel="stylesheet" href="/music/css/font.css" type="text/css" />
+        <link rel="stylesheet" href="/music/css/app.css" type="text/css" />
         <script src="/js/jquery-3.1.1.min.js" type="text/javascript"></script>
         <!-- <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script> -->
         <script src="/js/fileinput.js" type="text/javascript"></script>
@@ -17,48 +24,78 @@
             width: 100%;
             display: none;
           }
+          #bt1{
+            margin-top: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+            float: right;
+          }
         </style>
     </head>
     <body>
       <div class="alert alert-success" role="alert" id='alertBox-success'>Success!</div>
       <div class="alert alert-danger" role="alert" id='alertBox-danger'>Error!</div>
-      <div class="container kv-main" >
-            <h2>上传歌曲</h2>
-            <br>
-            <form id="music-info">
-                <div class="form-group">
-                    <h3>填写歌曲信息</h3>
-                    <br>
-                    <div class="form-group">
-                      <label>歌曲名称</label>
-                      <input type="text" class="form-control" id="text-1" name="name" placeholder="Name" required="required">
-                    </div>
-                    <div class="form-group">
-                      <label>作者名称</label>
-                      <input type="text" class="form-control" id="text-2" name="author" placeholder="Name" required="required">
-                    </div>
-                    <div class="form-group">
-                      <label>歌曲类型</label>
-                      <select class="form-control" name="type">
-                        <option>摇滚</option>
-                        <option>民谣</option>
-                        <option>流行</option>
-                      </select>
-                    </div>
-                </div>
-            </form>
-            <form enctype="multipart/form-data" method="POST" >
-                <div>
-                    <h3>选择歌曲文件和封面</h3>
-                    <!-- <h4 style="color:red">注意！请确保文件名和上传的歌曲信息保持一致</h4> -->
-                    <input id="file-1" type="file" multiple class="file" data-overwrite-initial="false" required="required">
-
-                </div>
-            </form>
-            <br>
-            <input id='bt1' type="button"class="btn btn-primary" value='上传'></input>
+      <header class="bg-white-only header header-md navbar navbar-fixed-top-xs">
+        <div class="navbar-header aside bg-info nav-xs">
+          <span href="/music" class="navbar-brand text-lt">
+            <i class="icon-earphones"></i>
+            <img src="/music/images/logo.png" alt="." class="hide">
+            <span class="hidden-nav-xs m-l-sm">Musik</span>
+          </span>
+          <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".user">
+            <i class="icon-settings"></i>
+          </a>
         </div>
-	<script>
+        </header>
+      <section>
+        <div class="container kv-main" >
+              <h2>上传歌曲</h2>
+              <br>
+              <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                  <form id="music-info" >
+                      <div class="form-group">
+                          <h3>填写歌曲信息</h3>
+                          <br>
+                          <div class="form-group">
+                            <label>歌曲名称</label>
+                            <input type="text" class="form-control" id="text-1" name="name" placeholder="Name" required="required">
+                          </div>
+                          <div class="form-group">
+                            <label>作者名称</label>
+                            <input type="text" class="form-control" id="text-2" name="author" placeholder="Name" required="required">
+                          </div>
+                          <div class="form-group">
+                            <label>歌曲类型</label>
+                            <select class="form-control" name="type">
+                              <option>摇滚</option>
+                              <option>民谣</option>
+                              <option>流行</option>
+                            </select>
+                          </div>
+                      </div>
+                  </form>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                <form enctype="multipart/form-data" method="POST" >
+                    <div>
+                        <h3>选择歌曲文件和封面</h3>
+                        <!-- <h4 style="color:red">注意！请确保文件名和上传的歌曲信息保持一致</h4> -->
+                        <input id="file-1" type="file" multiple class="file" data-overwrite-initial="false" required="required">
+                    </div>
+                </form>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-xs-0 col-sm-0 col-md-10 col-lg-10"></div>
+                <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+                  <input id='bt1' type="button" class="btn btn-info " value='上传' class="btn"></input>
+                </div>
+              </div>
+        </div>
+      </section>
+  <script>
     function alertMsg(type,msg){
       let state;
       switch (type) {
@@ -139,7 +176,8 @@
       $('#'+id).on('filebatchuploadsuccess',function(event,data){
         console.debug(data);
         alertMsg('success','音乐已上传。');
-      })
+        setTimeout("window.location.href = '/upload' ",1000);
+      });
     }
 
     fileinputInit("file-1","/upload-file");
