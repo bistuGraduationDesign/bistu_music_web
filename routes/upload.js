@@ -3,11 +3,6 @@ var fs = require("fs");
 
 function upload (req, tag, name, callback) {
   //get filename
-  console.log("eq.files.file_data: "+req.files.file_data);
-  console.log("eq.files.file_data000: "+req.files.file_data[0]);
-    console.log("eq.files.file_data000: "+req.files.file_data[0].type);
-
-  console.log("tag: "+tag);
   var filename = req.body.name + "." + req.files.file_data[tag].type.split("/")[1];
   //copy file to a public directory
   var targetPath = path.dirname(__filename).substring(0, path.dirname(__filename).lastIndexOf("/")) + '/public/updata/' + name + "/" + filename;

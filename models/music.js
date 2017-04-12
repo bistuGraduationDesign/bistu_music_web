@@ -85,7 +85,7 @@ Music.getByName_more = function(name, callback) {
       }
       //查找用户名（name键）值为 name 一个文档
       collection.find({
-        name: "%" + name + "%"
+        name: new RegExp(name)
       }, {
         limit: 12
       }).toArray(function(err, musics) {

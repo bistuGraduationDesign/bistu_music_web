@@ -129,7 +129,6 @@ module.exports = function(app) {
         } else {
           type = typeArray[2];
         }
-        console.log(type);
         Music.getByType(type, function(err, music) {
           if (err) {
             callback("请重试", null);
@@ -192,7 +191,6 @@ module.exports = function(app) {
           if (music) {
             callback("歌曲已存在");
           } else if (err) {
-            console.log(err);
             callback("请重试");
           } else {
             callback(null);
@@ -266,7 +264,7 @@ module.exports = function(app) {
 
   app.post('/play', checkStatus.checkLogin);
   app.post("/play", function(req, res) {
-    
+
     async.waterfall([
       function(callback) {
         Music.addTimes(req.body.name, function(err) {
@@ -278,8 +276,6 @@ module.exports = function(app) {
         });
       },
       function(callback) {
-        console.log(JSON.stringify(req.session.user));
-        console.log(req.body.type);
         User.changeType(req.session.user, req.body.type, function(err) {
           if (err) {
             callback(err);
@@ -289,8 +285,6 @@ module.exports = function(app) {
         })
       }
     ], function(err, result) {
-      console.log("err: "+err);
-      console.log("result: "+result);
       if (err) {
         var msg = {
           state: false,
@@ -307,8 +301,8 @@ module.exports = function(app) {
 
   });
 
-  app.get('/getByName', checkStatus.checkLogin);
-  app.get("/getByName", function(req, res) {
+  app.post('/getByName', checkStatus.checkLogin);
+  app.post("/getByName", function(req, res) {
     Music.getByName_more(req.body.name, function(err, musics) {
       if (err) {
         var msg = {
