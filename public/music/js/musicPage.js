@@ -1,4 +1,5 @@
 console.debug(dataset);
+//音乐数据获取
 var discoverMusicList=[];
 var topsongsMusicList=[];
 var newsongsMusicList=[];
@@ -26,8 +27,37 @@ function translate(music){
     poster:`/updata/images/${music.name}.jpeg`
   }
 }
+
+//search
+function keyDown(e) {
+  var ev= window.event||e;
+  if (ev.keyCode == 13) {
+   search();
+  }
+ }
+ function search(){
+   let text=$("#searchInput").val();
+
+   $.ajax({
+     url: '/path/to/file',
+     type: 'default GET (Other values: POST)',
+     dataType: 'default: Intelligent Guess (Other values: xml, json, script, or html)',
+     data: {param1: 'value1'}
+   })
+   .done(function() {
+     console.log("success");
+   })
+   .fail(function() {
+     console.log("error");
+   })
+   .always(function() {
+     console.log("complete");
+   });
+
+ }
 //全局变量
 var playingIndex;
+var playingMusic;
 
 //渲染discover区域
 var discover=$("#discover");
@@ -38,23 +68,23 @@ discoverMusicList.map((e)=>{
       <div class="pos-rlt">
         <div class="item-overlay opacity r r-2x bg-black ">
           <div class="center text-center m-t-n">
-            <a href="#" data-toggle="class" class="playBtn">
+            <a href="javascript:;" data-toggle="class" class="playBtn">
               <i class="icon-control-play i-2x text"></i>
               <i class="icon-control-pause i-2x text-active"></i>
             </a>
 
           </div>
           <div class="bottom padder m-b-sm">
-            <a href="#">
+            <a href="javascript:;">
               <i class="fa fa-plus-circle addMusic"></i>
             </a>
           </div>
         </div>
-        <a href="#"><img src="${e.poster}" alt="" class="r r-2x img-full"></a>
+        <a href="javascript:;"><img src="${e.poster}" alt="" class="r r-2x img-full"></a>
       </div>
       <div class="padder-v">
-        <a href="#" class="text-ellipsis">${e.title}</a>
-        <a href="#" class="text-ellipsis text-xs text-muted">${e.artist}</a>
+        <a href="javascript:;" class="text-ellipsis">${e.title}</a>
+        <a href="javascript:;" class="text-ellipsis text-xs text-muted">${e.artist}</a>
       </div>
     </div>
   </div>`);
@@ -64,7 +94,7 @@ discoverMusicList.map((e)=>{
 var topsongs=$("#topSongs");
 topsongsMusicList.map((e)=>{
   topsongs.append(
-    `<a href="#" class="list-group-item clearfix topsong-item">
+    `<a href="javascript:;" class="list-group-item clearfix topsong-item">
       <span class="pull-right h2 text-muted m-l">${topsongsMusicList.indexOf(e)+1}</span>
       <span class="pull-left thumb-sm avatar m-r" style='height:40px;'>
         <img src="${e.poster}" alt="${e.title}" style='height:100%;'>
@@ -85,14 +115,14 @@ newsongsMusicList.map((e)=>{
         <div class="pos-rlt">
           <div class="item-overlay opacity r r-2x bg-black">
             <div class="center text-center m-t-n">
-              <a href="#" class='nsplayBtn'><i class="fa fa-play-circle i-2x"></i></a>
+              <a href="javascript:;" class='nsplayBtn'><i class="fa fa-play-circle i-2x"></i></a>
             </div>
           </div>
-          <a href="#"><img src="${e.poster}" alt="${e.title}" class="r r-2x img-full"></a>
+          <a href="javascript:;"><img src="${e.poster}" alt="${e.title}" class="r r-2x img-full"></a>
         </div>
         <div class="padder-v">
-          <a href="#" class="text-ellipsis">${e.title}</a>
-          <a href="#" class="text-ellipsis text-xs text-muted">${e.artist}</a>
+          <a href="javascript:;" class="text-ellipsis">${e.title}</a>
+          <a href="javascript:;" class="text-ellipsis text-xs text-muted">${e.artist}</a>
         </div>
       </div>
     </div>`);
@@ -141,10 +171,11 @@ function addMusic(theAddMusic,playNow){
   List.map((l)=>{
     if(l.title==theAddMusic.title){
       havethis=true;
-      haveindex=discoverMusicList.indexOf(l);
+      haveindex=List.indexOf(l);
     }
   });
-  //console.debug(havethis);
+  // console.debug(havethis);
+  // console.debug(haveindex);
   if(!havethis)myPlaylist.add(theAddMusic,playNow);
   else return haveindex;
 }
@@ -183,5 +214,43 @@ $(".nsplayBtn").on('click', function(event) {
   let nsindex=$('.nsplayBtn').index(this);
   let nsthePlayMusic=newsongsMusicList[nsindex];
   let nsindex2=addMusic(nsthePlayMusic,true);
+  // console.debug(nsindex2);
   myPlaylist.play(nsindex2);
 });
+
+//下载
+if(dataset.User.authority)$("#download").show();
+
+function changeDownload(title){
+  $("download").attr('href', `/updata/musics/${title}.mp3`);
+}
+//播放
+$(document).on($.jPlayer.event.pause,(event)=>{
+  playingMusic=event.jPlayer.status.media.title;
+});
+$(document).on($.jPlayer.event.play,(event)=>{
+  console.debug(event.jPlayer.status.media.title);
+  if(event.jPlayer.status.media.title==playingMusic){
+
+  }else{
+      updataPlay(event.jPlayer.status.media.title);
+      playingMusic=event.jPlayer.status.media.title;
+  }
+});
+function updataPlay(title){
+  $.ajax({
+    url: '/play',
+    type: 'POST',
+    data: {name: title}
+  })
+  .done(function() {
+    console.log("success");
+  })
+  .fail(function() {
+    console.log("error");
+  })
+  .always(function(res) {
+    console.log("complete");
+    console.log(res);
+  });
+}
