@@ -148,7 +148,7 @@ a:hover .caret-white {
   box-shadow: none;
 }
 .form-control:focus {
-  border-color: #545ca6;
+  border-color: #4cb6cb;
 }
 .input-s-sm {
   width: 120px;
@@ -1284,8 +1284,8 @@ fieldset[disabled] .btn-default.active {
 }
 .btn-primary {
   color: #fff !important;
-  background-color: #545ca6;
-  border-color: #545ca6;
+  background-color: #4cb6cb;
+  border-color: #4cb6cb;
 }
 .btn-primary:hover,
 .btn-primary:focus,
@@ -1293,8 +1293,8 @@ fieldset[disabled] .btn-default.active {
 .btn-primary.active,
 .open .dropdown-toggle.btn-primary {
   color: #fff !important;
-  background-color: #4b5395;
-  border-color: #464d8b;
+  background-color: #39adc4;
+  border-color: #39adc4;
 }
 .btn-primary:active,
 .btn-primary.active,
@@ -1316,8 +1316,8 @@ fieldset[disabled] .btn-primary:hover,
 fieldset[disabled] .btn-primary:focus,
 fieldset[disabled] .btn-primary:active,
 fieldset[disabled] .btn-primary.active {
-  background-color: #545ca6;
-  border-color: #545ca6;
+  background-color: #39adc4;
+  border-color: #39adc4;
 }
 .btn-success {
   color: #fff !important;
