@@ -1,5 +1,3 @@
-var path = require("path");
-var fs = require("fs");
 var crypto = require("crypto"); //加密算法
 
 var multipart = require("connect-multiparty");
@@ -131,6 +129,7 @@ module.exports = function(app) {
         } else {
           type = typeArray[2];
         }
+        console.log(type);
         Music.getByType(type, function(err, music) {
           if (err) {
             callback("请重试", null);
@@ -185,14 +184,15 @@ module.exports = function(app) {
     res.render("upload", {});
   });
 
-  app.post('/upload-file', checkLogin);
+  app.post('/upload-file', checkStatus.checkLogin);
   app.post("/upload-file", multipart(), function(req, res) {
     async.waterfall([
       function(callback) {
-        Music.getByName_more(req.body.name, function(err, music) {
+        Music.getByName(req.body.name, function(err, music) {
           if (music) {
             callback("歌曲已存在");
           } else if (err) {
+            console.log(err);
             callback("请重试");
           } else {
             callback(null);
@@ -264,8 +264,9 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/play', checkStatus.checkLogin);
-  app.get("/play", function(req, res) {
+  app.post('/play', checkStatus.checkLogin);
+  app.post("/play", function(req, res) {
+    
     async.waterfall([
       function(callback) {
         Music.addTimes(req.body.name, function(err) {
@@ -277,16 +278,9 @@ module.exports = function(app) {
         });
       },
       function(callback) {
-        Music.getByName(req.body.name, function(err, music) {
-          if (err) {
-            callback(err, null);
-          } else {
-            callback(null, music);
-          }
-        })
-      },
-      function(music, callback) {
-        User.changeType(req.session.user, music.type, function(err) {
+        console.log(JSON.stringify(req.session.user));
+        console.log(req.body.type);
+        User.changeType(req.session.user, req.body.type, function(err) {
           if (err) {
             callback(err);
           } else {
@@ -295,6 +289,8 @@ module.exports = function(app) {
         })
       }
     ], function(err, result) {
+      console.log("err: "+err);
+      console.log("result: "+result);
       if (err) {
         var msg = {
           state: false,
@@ -313,7 +309,7 @@ module.exports = function(app) {
 
   app.get('/getByName', checkStatus.checkLogin);
   app.get("/getByName", function(req, res) {
-    Music.getByName(req.body.name, function(err, musics) {
+    Music.getByName_more(req.body.name, function(err, musics) {
       if (err) {
         var msg = {
           state: false,

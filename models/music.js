@@ -59,9 +59,7 @@ Music.getByName = function(name, callback) {
       //查找用户名（name键）值为 name 一个文档
       collection.findOne({
         name: name
-      }, {
-        limit: 12
-      }).toArray(function(err, music) {
+      }, function(error, music) {
         mongodb.close();
         if (err) {
           return callback(err);
@@ -69,6 +67,7 @@ Music.getByName = function(name, callback) {
         callback(null, music);
       });
     });
+
   });
 };
 
@@ -86,7 +85,7 @@ Music.getByName_more = function(name, callback) {
       }
       //查找用户名（name键）值为 name 一个文档
       collection.find({
-        name: "%"+name+"%"
+        name: "%" + name + "%"
       }, {
         limit: 12
       }).toArray(function(err, musics) {
@@ -111,15 +110,12 @@ Music.getByType = function(type, callback) {
         mongodb.close();
         return callback(err); //错误，返回 err 信息
       }
-      console.log("typetype:" + type);
       //返回只包含 name、time、title 属性的文档组成的存档数组
       collection.find({
         "type": type
       }, {
         limit: 12
       }).toArray(function(err, musics) {
-        console.log("typetmusics:" + musics);
-
         mongodb.close();
         if (err) {
           return callback(err);
@@ -199,19 +195,18 @@ Music.addTimes = function(name, callback) {
       }
 
       collection.findOne({
-        "name": name
+        name: name
       }, function(err, music) {
         if (err) {
           mongodb.close();
           return callback(err);
         }
-        music.times = music.times++;
         //更新文章内容
         collection.update({
-          "name": name
+          name: name
         }, {
           $set: {
-            music: music
+            times: music.times+1
           }
         }, function(err) {
           mongodb.close();

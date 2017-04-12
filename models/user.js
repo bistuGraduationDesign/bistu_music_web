@@ -73,44 +73,38 @@ User.get = function(name, callback) {
   });
 };
 
-User.changeType = function(name, type, callback){
+User.changeType = function(user, type, callback) {
   //打开数据库
   mongodb.open(function(err, db) {
     if (err) {
       return callback(err);
     }
     //读取 posts 集合
-    db.collection('musics', function(err, collection) {
+    db.collection('users', function(err, collection) {
       if (err) {
         mongodb.close();
         return callback(err);
       }
 
-      collection.findOne({
-        "name": name
-      }, function(err, music) {
+      var typeArray = user.type.push(parseInt(type));
+      user.type.shift();
+
+      //更新文章内容
+      collection.update({
+        name: user.name
+      }, {
+        $set: {
+          type: user.type
+        }
+      }, function(err) {
+        mongodb.close();
         if (err) {
-          mongodb.close();
           return callback(err);
         }
-        music.type = music.type.push(type);
-        music.type = music.type.shift();
-        
-        //更新文章内容
-        collection.update({
-          "name": name
-        }, {
-          $set: {
-            music: music
-          }
-        }, function(err) {
-          mongodb.close();
-          if (err) {
-            return callback(err);
-          }
-          callback(null);
-        });
+        callback(null);
       });
+
+
     });
   });
 }
