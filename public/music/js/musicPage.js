@@ -3,7 +3,6 @@ console.debug(dataset);
 var discoverMusicList=[];
 var topsongsMusicList=[];
 var newsongsMusicList=[];
-
 dataset.Typemusic.map((music)=>{
     discoverMusicList.push(translate(music));
 });
@@ -38,21 +37,33 @@ function keyDown(e) {
  }
  function search(){
    let text=$("#searchInput").val();
+   if(!text)return ;
 
+   $("#discover").css({"opacity":"0.3"});
    $.ajax({
      url: '/getByName',
      type: 'POST',
      data: {name:text}
    })
-   .done(function() {
+   .done(function(res) {
      console.log("success");
+     let result=res.info;
+     discoverMusicList=[];
+     result.map((music)=>{
+         discoverMusicList.push(translate(music));
+     });
+     discover.empty();
+     $("#discover").css({"opacity":"1"});
+     discoverMusicList.map((e)=>{
+       discoverRender(e);
+     });
+     discoverPlay();
    })
    .fail(function() {
      console.log("error");
    })
    .always(function(res) {
      console.log("complete");
-     console.log(res);
    });
 
  }
@@ -63,6 +74,9 @@ var playingMusic;
 //渲染discover区域
 var discover=$("#discover");
 discoverMusicList.map((e)=>{
+  discoverRender(e);
+});
+function discoverRender(e){
   discover.append(
     `<div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
     <div class="item">
@@ -89,8 +103,7 @@ discoverMusicList.map((e)=>{
       </div>
     </div>
   </div>`);
-});
-
+}
 //渲染topsong部分
 var topsongs=$("#topSongs");
 topsongsMusicList.map((e)=>{
@@ -131,39 +144,43 @@ newsongsMusicList.map((e)=>{
 /*
 discover部分
 */
+function discoverPlay(){
+  //添加歌曲
+  var addMusicBtn=$('.addMusic');
+  addMusicBtn.on('click', function(event) {
+    let index=addMusicBtn.index(this);
+    console.debug(index);
+    let theAddMusic=discoverMusicList[index];
+    addMusic(theAddMusic,false);
+  });
 
-//添加歌曲
-$('.addMusic').on('click', function(event) {
-  let index=$('.addMusic').index(this);
-  let theAddMusic=discoverMusicList[index];
-  addMusic(theAddMusic,false);
-});
-
-//播放歌曲
-$('.playBtn').on('click', function(event) {
-  let index=$('.playBtn').index(this);
-  //reset
-  $('.playBtn').not($(this)).removeClass('active');
-  $('.item-overlay').not($('.item-overlay').eq(index)).removeClass('active');
-  //add class
-  //console.debug(index);
-  $('.item-overlay').eq(index).addClass('active');
-  //add and play music
-  let thePlayMusic=discoverMusicList[index];
-  if($(this).is('.active')){
-    myPlaylist.pause();
-  }else{
-    let index2=addMusic(thePlayMusic,true);
-    //console.debug(index2);
-    if(playingIndex==index){
-      myPlaylist.play();
+  //播放歌曲
+  var playBtn=$('.playBtn');
+  playBtn.on('click', function(event) {
+    let index=playBtn.index(this);
+    //reset
+    playBtn.not($(this)).removeClass('active');
+    $('.item-overlay').not($('.item-overlay').eq(index)).removeClass('active');
+    //add class
+    //console.debug(index);
+    $('.item-overlay').eq(index).addClass('active');
+    //add and play music
+    let thePlayMusic=discoverMusicList[index];
+    if($(this).is('.active')){
+      myPlaylist.pause();
     }else{
-      myPlaylist.play(index2);
-      playingIndex=index2;
+      let index2=addMusic(thePlayMusic,true);
+      //console.debug(index2);
+      if(playingIndex==index){
+        myPlaylist.play();
+      }else{
+        myPlaylist.play(index2);
+        playingIndex=index2;
+      }
     }
-  }
-});
-
+  });
+}
+discoverPlay();
 //添加歌曲到列表
 function addMusic(theAddMusic,playNow){
   let List=myPlaylist.playlist;
