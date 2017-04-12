@@ -24,7 +24,8 @@ function translate(music){
     title:music.name,
     artist:music.author,
     mp3:`/updata/musics/${music.name}.mp3`,
-    poster:`/updata/images/${music.name}.jpeg`
+    poster:`/updata/images/${music.name}.jpeg`,
+    type:music.type
   }
 }
 
@@ -39,10 +40,9 @@ function keyDown(e) {
    let text=$("#searchInput").val();
 
    $.ajax({
-     url: '/path/to/file',
-     type: 'default GET (Other values: POST)',
-     dataType: 'default: Intelligent Guess (Other values: xml, json, script, or html)',
-     data: {param1: 'value1'}
+     url: '/getByName',
+     type: 'POST',
+     data: {name:text}
    })
    .done(function() {
      console.log("success");
@@ -50,8 +50,9 @@ function keyDown(e) {
    .fail(function() {
      console.log("error");
    })
-   .always(function() {
+   .always(function(res) {
      console.log("complete");
+     console.log(res);
    });
 
  }
@@ -222,26 +223,30 @@ $(".nsplayBtn").on('click', function(event) {
 if(dataset.User.authority)$("#download").show();
 
 function changeDownload(title){
-  $("download").attr('href', `/updata/musics/${title}.mp3`);
+  $("#download").attr('href', `/updata/musics/${title}.mp3`);
 }
 //播放
 $(document).on($.jPlayer.event.pause,(event)=>{
   playingMusic=event.jPlayer.status.media.title;
 });
 $(document).on($.jPlayer.event.play,(event)=>{
-  console.debug(event.jPlayer.status.media.title);
+  console.debug(event.jPlayer.status.media);
   if(event.jPlayer.status.media.title==playingMusic){
 
   }else{
-      updataPlay(event.jPlayer.status.media.title);
+      updataPlay(event.jPlayer.status.media.title,event.jPlayer.status.media.type);
+      changeDownload(event.jPlayer.status.media.title);
       playingMusic=event.jPlayer.status.media.title;
   }
 });
-function updataPlay(title){
+function updataPlay(title,type){
   $.ajax({
     url: '/play',
     type: 'POST',
-    data: {name: title}
+    data: {
+      name: title,
+      type: type
+    }
   })
   .done(function() {
     console.log("success");
