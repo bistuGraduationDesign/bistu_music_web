@@ -1,8 +1,7 @@
 var path = require("path");
 var fs = require("fs");
 var crypto = require("crypto"); //加密算法
-//captcha
-var ccap = require("ccap"); //验证码
+
 var multipart = require("connect-multiparty");
 var async = require("async");
 
@@ -10,76 +9,41 @@ var settings = require("../settings");
 var User = require("../models/user");
 var Music = require("../models/music");
 
-//captcha
-var captcha = ccap({
-  width: 256, //set width,default is 256
-  height: 60, //set height,default is 60
-  offset: 40, //set text spacing,default is 40
-  quality: 600, //set pic quality,default is 50
-  fontsize: 67, //set font size,default is 57
-});
-
-function changeVerCode(req, res) {
-  var captchaArr = captcha.get(); //生成新的验证码
-  var captchaText = captchaArr[0],
-    captchaBuffer = captchaArr[1];
-  req.session.verCode = captchaText;
-  console.log("changeVerCode：" + req.session.verCode);
-  res.end(captchaBuffer);
-}
-
-function checkVerCode(req, res) {
-  console.log("checkVerCode:" + req.body.verCode);
-  console.log("checkVerCode:" + req.body.verCode.toUpperCase());
-  console.log("checkVerCode:" + req.session.verCode.substring(0, 4));
-  var msg;
-  console.log(req.body.verCode);
-  console.log(req.session.verCode);
-  if (req.session.verCode) {
-    if (req.body.verCode.toUpperCase() == req.session.verCode.substring(0, 4)) {
-      msg = {
-        state: true,
-        info: "验证码正确"
-      };
-      return res.send(msg);
-    } else {
-      msg = {
-        state: false,
-        info: "验证码错误"
-      };
-      return res.send(msg);
-    }
-  }
-};
+var verCode = require("./verCode");
+var checkStatus = require("./checkStatus");
+var upload = require("./upload");
 
 module.exports = function(app) {
 
+  app.get('/', checkStatus.checkNotLogin);
   app.get("/", function(req, res) {
     res.render("index", {});
   });
 
+  app.get('/signin', checkStatus.checkNotLogin);
   app.get("/signin", function(req, res) {
     res.render("signin", {});
   });
+
+  app.get('/verificationCode/:random', checkStatus.checkNotLogin);
   app.get('/verificationCode/:random', function(req, res) {
-    changeVerCode(req, res);
+    verCode.changeVerCode(req, res);
   });
+
+  app.post('/checkVerCode', checkStatus.checkNotLogin);
   app.post('/checkVerCode', function(req, res) {
-    console.log("in checkVerCode")
-    checkVerCode(req, res);
+    verCode.checkVerCode(req, res);
   });
 
-
+  app.post('/signin', checkStatus.checkNotLogin);
   app.post('/signin', function(req, res) {
-    var msg;
     //生成密码的 md5 值
-    var md5 = crypto.createHash('md5'),
-      password = md5.update(req.body.password).digest('hex');
+    var md5 = crypto.createHash('md5');
+    var password = md5.update(req.body.password).digest('hex');
     //检查用户是否存在
-    //console.log(req.body.name);
     User.get(req.body.name, function(err, user) {
       if (!user) {
-        msg = {
+        var msg = {
           state: false,
           info: "用户不存在"
         };
@@ -88,34 +52,29 @@ module.exports = function(app) {
       }
       //检查密码是否一致
       if (user.password != password) {
-        msg = {
+        var msg = {
           state: false,
           info: "密码错误"
         };
         //密码错误则跳转到登录页
       }
-
       //用户名密码都匹配后，将用户信息存入 session
       req.session.user = user;
-      msg = {
+      var msg = {
         state: true,
         info: "sussess"
       };
       return res.send(msg);
-
-      // res.redirect('/');//登陆成功后跳转到主页
     });
   });
 
+  app.post('/reg', checkStatus.checkNotLogin);
   app.post('/reg', function(req, res) {
-    var msg;
-    var name = req.body.name;
-    var email = req.body.email;
     var password = req.body.password;
     var password_re = req.body['passwordrepeat'];
     //检验用户两次输入的密码是否一致
     if (password_re != password) {
-      msg = {
+      var msg = {
         state: false,
         info: "两次输入的密码是不一致"
       };
@@ -134,7 +93,7 @@ module.exports = function(app) {
     //检查用户名是否已经存在
     User.get(newUser.name, function(err, user) {
       if (user) {
-        msg = {
+        var msg = {
           state: false,
           info: "用户已存在"
         };
@@ -143,15 +102,14 @@ module.exports = function(app) {
       //如果不存在则新增用户
       newUser.save(function(err, user) {
         if (err) {
-          msg = {
+          var msg = {
             state: false,
             info: "请重试"
           }; //注册失败返回主册页
           return res.send(msg);
         }
-        console.log(user);
         // req.session.user = user; //用户信息存入 session
-        msg = {
+        var msg = {
           state: true,
           info: "sussess"
         };
@@ -160,18 +118,17 @@ module.exports = function(app) {
     });
   });
 
+  app.get('/music', checkStatus.checkLogin);
   app.get("/music", function(req, res) {
-    // console.log(req.session.user);
     var user = req.session.user;
     // an example using an object instead of an array
     async.waterfall([
       function(callback) {
-        console.log("user['type']:: " + user['type']);
         var typeArray = user['type'];
         var type;
-        if(typeArray[0]==typeArray[1]){
+        if (typeArray[0] == typeArray[1]) {
           type = typeArray[0];
-        }else{
+        } else {
           type = typeArray[2];
         }
         Music.getByType(type, function(err, music) {
@@ -201,11 +158,11 @@ module.exports = function(app) {
         });
       }
     ], function(err, Typemusic, Hotmusic, Timemusic) {
-      console.log("Typemusic:" + JSON.stringify(Typemusic));
+      // console.log("Typemusic:" + JSON.stringify(Typemusic));
       // console.log("Hotmusic:" + JSON.stringify(Hotmusic));
       // console.log("Timemusic:" + JSON.stringify(Timemusic));
       if (err) {
-        msg = {
+        var msg = {
           state: false,
           info: err
         }; //注册失败返回主册页
@@ -223,10 +180,12 @@ module.exports = function(app) {
 
   });
 
+  app.get('/upload', checkStatus.checkLogin);
   app.get("/upload", function(req, res) {
     res.render("upload", {});
   });
 
+  app.post('/upload-file', checkLogin);
   app.post("/upload-file", multipart(), function(req, res) {
     async.waterfall([
       function(callback) {
@@ -242,41 +201,25 @@ module.exports = function(app) {
       },
       function(callback) {
         var fileData = req.files.file_data
-
         if (fileData[0].type.indexOf("image") >= 0 && fileData[1].type.indexOf("audio") >= 0) {
-          upload(req, 0, 'images', function(err) {
+          upload.select(req, 0, 1, function(err) {
             if (err) {
               callback(err)
             } else {
-              upload(req, 1, 'musics', function(err) {
-                if (err) {
-                  callback(err)
-                } else {
-                  callback(null)
-                }
-              })
+              callback(null)
             }
           })
-
         } else if (fileData[1].type.indexOf("image") >= 0 && fileData[0].type.indexOf("audio") >= 0) {
-          upload(req, 1, 'images', function(err) {
+          upload.select(req, 1, 0, function(err) {
             if (err) {
               callback(err)
             } else {
-              upload(req, 0, 'musics', function(err) {
-                if (err) {
-                  callback(err)
-                } else {
-                  callback(null)
-                }
-              })
+              callback(null)
             }
           })
-
         } else {
           callback("请输入一个音频，mp3哦，一个图片，jepg哦，么么哒")
         }
-
       },
       function(callback) {
         var type = 3;
@@ -307,13 +250,12 @@ module.exports = function(app) {
         });
       }
     ], function(err, result) {
-      console.log("err e: " + err);
       if (err) {
-        msg = {
+        var msg = {
           error: err
         }; //注册失败返回主册页
       } else {
-        msg = {
+        var msg = {
           state: true,
           info: "sussess"
         };
@@ -322,6 +264,7 @@ module.exports = function(app) {
     });
   });
 
+  app.get('/play', checkStatus.checkLogin);
   app.get("/play", function(req, res) {
     async.waterfall([
       function(callback) {
@@ -353,12 +296,12 @@ module.exports = function(app) {
       }
     ], function(err, result) {
       if (err) {
-        msg = {
+        var msg = {
           state: false,
           info: err
         };
       } else {
-        msg = {
+        var msg = {
           state: true,
           info: "sussess"
         };
@@ -368,53 +311,27 @@ module.exports = function(app) {
 
   });
 
+  app.get('/getByName', checkStatus.checkLogin);
   app.get("/getByName", function(req, res) {
     Music.getByName(req.body.name, function(err, musics) {
       if (err) {
-        msg = {
+        var msg = {
           state: false,
           info: err
         };
       } else {
-        msg = {
+        var msg = {
           state: true,
-          info: "sussess"
+          info: musics
         };
         return res.send(msg);
       }
     });
   });
 
-  app.get("logout", function(req, res) {
+  app.get('/logout', checkStatus.checkLogin);
+  app.get("/logout", function(req, res) {
     req.session.user = null;
     res.redirect("/");
   })
 }
-
-
-function upload(req, tag, name, callback) {
-  //get filename
-  var filename = req.body.name + "." + req.files.file_data[tag].type.split("/")[1];
-  //copy file to a public directory
-  var targetPath = path.dirname(__filename).substring(0, path.dirname(__filename).lastIndexOf("/")) + '/public/updata/' + name + "/" + filename;
-  //copy file
-  // stream = fs.createWriteStream(path.join(upload_dir, name));
-  const readStream = fs.createReadStream(req.files.file_data[tag].path);
-  const writeStream = fs.createWriteStream(targetPath, {
-    flags: 'w',
-    encoding: null,
-    mode: 0666
-  });
-  readStream.pipe(writeStream);
-  readStream.on('error', (error) => {
-    // console.log('readStream error', error.message);
-    callback(error.message);
-  })
-  writeStream.on('error', (error) => {
-    // console.log('writeStream error', error.message);
-    callback(error.message);
-  })
-  readStream.on('end', function() {
-    callback(null)
-  })
-};
