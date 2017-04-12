@@ -167,7 +167,14 @@ module.exports = function(app) {
     async.waterfall([
       function(callback) {
         console.log("user['type']:: " + user['type']);
-        Music.getByType(user['type'], function(err, music) {
+        var typeArray = user['type'];
+        var type;
+        if(typeArray[0]==typeArray[1]){
+          type = typeArray[0];
+        }else{
+          type = typeArray[2];
+        }
+        Music.getByType(type, function(err, music) {
           if (err) {
             callback("请重试", null);
           } else {
@@ -221,13 +228,9 @@ module.exports = function(app) {
   });
 
   app.post("/upload-file", multipart(), function(req, res) {
-    console.log(req.body);
-    console.log(req.files);
     async.waterfall([
       function(callback) {
-        Music.getByName(req.body.name, function(err, music) {
-          console.log("err: " + err);
-          console.log("music: " + music);
+        Music.getByName_more(req.body.name, function(err, music) {
           if (music) {
             callback("歌曲已存在");
           } else if (err) {
@@ -319,37 +322,73 @@ module.exports = function(app) {
     });
   });
 
-  app.get("/addTimes", function(req, res) {
-    Music.addTimes(name, function(err) {
+  app.get("/play", function(req, res) {
+    async.waterfall([
+      function(callback) {
+        Music.addTimes(req.body.name, function(err) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null);
+          }
+        });
+      },
+      function(callback) {
+        Music.getByName(req.body.name, function(err, music) {
+          if (err) {
+            callback(err, null);
+          } else {
+            callback(null, music);
+          }
+        })
+      },
+      function(music, callback) {
+        User.changeType(req.session.user, music.type, function(err) {
+          if (err) {
+            callback(err);
+          } else {
+            callback(null);
+          }
+        })
+      }
+    ], function(err, result) {
       if (err) {
         msg = {
-          error: err
-        }; //注册失败返回主册页
+          state: false,
+          info: err
+        };
       } else {
         msg = {
           state: true,
           info: "sussess"
         };
-        return res.send(msg); //注册成功后返回主页
+      }
+      return res.send(msg);
+    });
+
+  });
+
+  app.get("/getByName", function(req, res) {
+    Music.getByName(req.body.name, function(err, musics) {
+      if (err) {
+        msg = {
+          state: false,
+          info: err
+        };
+      } else {
+        msg = {
+          state: true,
+          info: "sussess"
+        };
+        return res.send(msg);
       }
     });
   });
 
-  app.get("/getByName", function(req, res) {
-    Music.getByName(name, function(err, musics) {
-      if (err) {
-        msg = {
-          error: err
-        }; //注册失败返回主册页
-      } else {
-        msg = {
-          state: true,
-          info: "sussess"
-        };
-        return res.send(msg); //注册成功后返回主页
-      }
-    });
-  });
+  app.get("logout", function(req, res) {
+    req.session.user = null;
+    res.redirect("/");
+  })
 }
 
 

@@ -4,8 +4,8 @@ function User(user) {
   this.name = user.name;
   this.email = user.email;
   this.password = user.password;
-  this.type = 3; //摇滚1 民谣2 流行3
-  this.authority = 0;//用户0 管理1
+  this.type = [3, 3, 3]; //摇滚1 民谣2 流行3
+  this.authority = 0; //用户0 管理1
 };
 
 module.exports = User;
@@ -15,11 +15,11 @@ User.prototype.save = function(callback) {
   var date = new Date(Date.now() + (8 * 60 * 60 * 1000));
 
   var user = {
-    name: this.name,//用户名
-    email: this.email,//用户邮箱
-    password: this.password,//密码，md5加密后
-    type: this.type,//用户类型，用于用户聚类
-    time: date,//注册时间
+    name: this.name, //用户名
+    email: this.email, //用户邮箱
+    password: this.password, //密码，md5加密后
+    type: this.type, //用户类型，用于用户聚类
+    time: date, //注册时间
     authority: this.authority
   };
   //打开数据库
@@ -72,3 +72,45 @@ User.get = function(name, callback) {
     });
   });
 };
+
+User.changeType = function(name, type, callback){
+  //打开数据库
+  mongodb.open(function(err, db) {
+    if (err) {
+      return callback(err);
+    }
+    //读取 posts 集合
+    db.collection('musics', function(err, collection) {
+      if (err) {
+        mongodb.close();
+        return callback(err);
+      }
+
+      collection.findOne({
+        "name": name
+      }, function(err, music) {
+        if (err) {
+          mongodb.close();
+          return callback(err);
+        }
+        music.type = music.type.push(type);
+        music.type = music.type.shift();
+        
+        //更新文章内容
+        collection.update({
+          "name": name
+        }, {
+          $set: {
+            music: music
+          }
+        }, function(err) {
+          mongodb.close();
+          if (err) {
+            return callback(err);
+          }
+          callback(null);
+        });
+      });
+    });
+  });
+}

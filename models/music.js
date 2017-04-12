@@ -61,6 +61,34 @@ Music.getByName = function(name, callback) {
         name: name
       }, {
         limit: 12
+      }).toArray(function(err, music) {
+        mongodb.close();
+        if (err) {
+          return callback(err);
+        }
+        callback(null, music);
+      });
+    });
+  });
+};
+
+Music.getByName_more = function(name, callback) {
+  //打开数据库
+  mongodb.open(function(err, db) {
+    if (err) {
+      return callback(err); //错误，返回 err 信息
+    }
+    //读取 musics 集合
+    db.collection('musics', function(err, collection) {
+      if (err) {
+        mongodb.close();
+        return callback(err); //错误，返回 err 信息
+      }
+      //查找用户名（name键）值为 name 一个文档
+      collection.find({
+        name: "%"+name+"%"
+      }, {
+        limit: 12
       }).toArray(function(err, musics) {
         mongodb.close();
         if (err) {
