@@ -59,12 +59,14 @@ Music.getByName = function(name, callback) {
       //查找用户名（name键）值为 name 一个文档
       collection.findOne({
         name: name
-      }, function(err, music) {
+      }, {
+        limit: 12
+      }).toArray(function(err, musics) {
         mongodb.close();
         if (err) {
-          return callback(err); //失败！返回 err
+          return callback(err);
         }
-        callback(null, music); //成功！返回查询的用户信息
+        callback(null, musics);
       });
     });
   });
@@ -81,12 +83,15 @@ Music.getByType = function(type, callback) {
         mongodb.close();
         return callback(err); //错误，返回 err 信息
       }
+      console.log("typetype:" + type);
       //返回只包含 name、time、title 属性的文档组成的存档数组
       collection.find({
         "type": type
       }, {
         limit: 12
       }).toArray(function(err, musics) {
+        console.log("typetmusics:" + musics);
+
         mongodb.close();
         if (err) {
           return callback(err);
