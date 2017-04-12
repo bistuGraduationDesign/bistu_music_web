@@ -139,7 +139,7 @@ Music.getByHot = function(callback) {
         return callback(err); //错误，返回 err 信息
       }
       collection.find({}, {
-        limit: 12
+        limit: 5
       }).sort({
         times: -1
       }).toArray(function(err, musics) {
@@ -166,7 +166,7 @@ Music.getByTime = function(callback) {
         return callback(err); //错误，返回 err 信息
       }
       collection.find({}, {
-        limit: 12
+        limit: 8
       }).sort({
         time: -1
       }).toArray(function(err, musics) {
