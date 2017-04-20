@@ -44,7 +44,7 @@ Music.prototype.save = function(callback) {
   });
 };
 
-Music.prototype.getByName = function(name, callback) {
+Music.getByName = function(name, callback) {
   //打开数据库
   mongodb.open(function(err, db) {
     if (err) {
@@ -71,7 +71,7 @@ Music.prototype.getByName = function(name, callback) {
   });
 };
 
-Music.prototype.getByName_more = function(name, callback) {
+Music.getByName_more = function(name, callback) {
   //打开数据库
   mongodb.open(function(err, db) {
     if (err) {
@@ -99,7 +99,7 @@ Music.prototype.getByName_more = function(name, callback) {
   });
 };
 
-Music.prototype.getByType = function(type, callback) {
+Music.getByType = function(type, callback) {
   //打开数据库
   mongodb.open(function(err, db) {
     if (err) {
@@ -126,7 +126,7 @@ Music.prototype.getByType = function(type, callback) {
   });
 };
 
-Music.prototype.getByHot = function(callback) {
+Music.getByHot = function(callback) {
   //打开数据库
   mongodb.open(function(err, db) {
     if (err) {
@@ -153,7 +153,7 @@ Music.prototype.getByHot = function(callback) {
   });
 };
 
-Music.prototype.getByTime = function(callback) {
+Music.getByTime = function(callback) {
   //打开数据库
   mongodb.open(function(err, db) {
     if (err) {
@@ -181,7 +181,7 @@ Music.prototype.getByTime = function(callback) {
 };
 
 //更新一篇文章及其相关信息
-Music.prototype.addTimes = function(name, callback) {
+Music.addTimes = function(name, callback) {
   //打开数据库
   mongodb.open(function(err, db) {
     if (err) {
