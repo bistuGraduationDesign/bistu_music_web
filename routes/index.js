@@ -6,6 +6,7 @@ var async = require("async");
 var settings = require("../settings");
 var User = require("../models/user");
 var Music = require("../models/music");
+var Comment = require("../models/comment");
 
 var verCode = require("./verCode");
 var checkStatus = require("./checkStatus");
@@ -304,6 +305,57 @@ module.exports = function(app) {
   app.post('/getByName', checkStatus.checkLogin);
   app.post("/getByName", function(req, res) {
     Music.getByName_more(req.body.name, function(err, musics) {
+      if (err) {
+        var msg = {
+          state: false,
+          info: err
+        };
+      } else {
+        var msg = {
+          state: true,
+          info: musics
+        };
+        return res.send(msg);
+      }
+    });
+  });
+
+
+  app.post('/saveComment', checkStatus.checkLogin);
+  app.post("/saveComment", function(req, res) {
+    let user = req.session.user;
+    if (!user) {
+      res.redirect('/sign');
+    } else {
+      //增加评论
+      console.log(req.body);
+      let newsname = req.body.name;
+      let content = req.body.content;
+      var newComment = new comment({
+        news: newsname,
+        user: user,
+        content: content
+      });
+      newComment.save(function(err, comment) {
+        if (err) {
+          var msg = {
+            state: false,
+            info: err
+          };
+          return res.send(msg);
+        }
+        var msg = {
+          state: true,
+          info: '评论完成'
+        };
+        return res.send(msg);
+      });
+    }
+  });
+
+  app.post('/comment', checkStatus.checkLogin);
+  app.post("/comment", function(req, res) {
+    Comment.getByName(req.body.music, function(err, musics) {
       if (err) {
         var msg = {
           state: false,
