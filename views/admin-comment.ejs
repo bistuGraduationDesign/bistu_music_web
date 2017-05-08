@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel='stylesheet' type='text/css' href='/css/bootstrap.min.css' >
+    <script src="/js/jquery-3.1.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <style>
+          .alert{
+            position: fixed;
+            width: 100%;
+            display: none;
+          }
+          
+        </style>
+</head>
+<body>
+
+<nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="/admin-music">后台</a>
+    </div>
+    <div>
+        <ul class="nav navbar-nav">
+            <li><a href="admin-music">音乐管理</a></li>
+            <li><a href="admin-user">用户管理</a></li>
+            <li class="active"><a href="admin-comment">评论管理</a></li>
+        </ul>
+    </div>
+    </div>
+</nav>
+
+
+<div class="wrap wrap_white">
+          <div class="alert alert-success" role="alert" id='alertBox-success'>Success!</div>
+          <div class="alert alert-danger" role="alert" id='alertBox-danger'>Error!</div>
+            <div class="container title">
+                <h1 class="title__h1 underscore">评论管理</h1>
+            </div>
+        </div>
+        <!-- END title -->
+        <div class="wrap wrap_white pt20">
+            <div class="container">
+              <div class="container wrap_white">
+                  <table class="table table-bordered table-hover">
+                    <colgroup>
+                      <col style="width:10%">
+                      <col style="width:50%">
+                      <col style="width:20%">
+                      <col style="width:20%">
+                    </colgroup>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>评论音乐名称</th>
+                        <th>评论日期</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+                    <tbody id='usersTable'>
+
+                    </tbody>
+                  </table>
+              </div>
+            </div>
+        </div>
+
+<script type="text/javascript">
+    var dataset={
+      comments:<%- JSON.stringify(comments) %>
+    };
+  console.debug(dataset);
+  </script>
+  <script>
+
+    function alertMsg(type,msg){
+      let state;
+      switch (type) {
+        case 'success':
+          state='成功'
+          break;
+        case 'danger':
+          state='错误'
+          break;
+      }
+      $('#alertBox-'+type).html(`<b>${state}!  </b>${msg}`).fadeIn('slow/400/fast').delay(2000).fadeOut('slow/400/fast');
+    }
+    $(document).ready(function() {
+      comments=dataset.comments;
+      //render
+      let commentsTable=$("#commentsTable");
+      for (var i = 0; i < comments.length; i++) {
+        let n=comments[i];
+        commentstable.append(`
+          <tr>
+            <th>${i+1}</th>
+            <td>${n.music}</td>
+            <td>${n.user.name}</td>
+            <td>${n.time.substring(0,10)}</td>
+            <td>${n.content}</td>
+            <td>
+              <button class="btn btn-danger commentdelete">删除</button>
+            </td>
+          </tr>
+          `);
+      }
+      
+      $(".delete-comment").on('click', function(event) {
+        let index=$('.delete-comment').index(this);
+        $.ajax({
+          url: '/delete-comment',
+          type: 'POST',
+          data: {
+            id: comments[index]._id
+
+          }
+        })
+        .done(function(res) {
+          if(res.state){
+            alertMsg('success',res.info);
+            setTimeout(function () {
+              location.reload();
+            },500)
+          }else {
+            alertMsg('danger',res.info);
+          }
+        });
+      });
+    });
+    </script>
+</body>
+
+</html>

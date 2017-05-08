@@ -55,6 +55,7 @@ module.exports = function(app) {
           state: false,
           info: "密码错误"
         };
+        return res.send(msg);
         //密码错误则跳转到登录页
       }
       //用户名密码都匹配后，将用户信息存入 session
@@ -375,5 +376,155 @@ module.exports = function(app) {
   app.get("/logout", function(req, res) {
     req.session.user = null;
     res.redirect("/");
+  })
+
+  app.get("/admin", function(req, res) {
+    res.render("admin", {});
+  });
+
+  // app.post('/admin-login', checkStatus.checkNotLogin);
+  app.post('/admin-login', function(req, res) {
+    //生成密码的 md5 值
+    var md5 = crypto.createHash('md5');
+    var password = md5.update(req.body.password).digest('hex');
+    //检查用户是否存在
+    User.get(req.body.name, function(err, user) {
+      if (!user) {
+        var msg = {
+          state: false,
+          info: "用户不存在"
+        };
+        return res.send(msg);
+        //用户不存在则跳转到登录页
+      }
+      //检查密码是否一致
+      if (user.password != password) {
+        var msg = {
+          state: false,
+          info: "密码错误"
+        };
+        return res.send(msg);
+        //密码错误则跳转到登录页
+      }
+      if (user.authority != 1) {
+        var msg = {
+          state: false,
+          info: "权限不足"
+        };
+        return res.send(msg);
+      }
+      //用户名密码都匹配后，将用户信息存入 session
+      req.session.user = user;
+      var msg = {
+        state: true,
+        info: "sussess"
+      };
+      console.log(msg);
+      return res.send(msg);
+    });
+  });
+
+  app.get("/admin-music", function(req, res) {
+    Music.getByName_more('', function(err, musics) {
+      if (err) {
+        var msg = {
+          state: false,
+          info: "请重试"
+        };
+        return res.send(msg);
+      } else {
+        res.render("admin-music", {
+          musics: musics
+        });
+      }
+    });
+  });
+
+  app.post('/delete-music', function(req, res) {
+    var dn = req.body.name;
+    Music.delete(dn, function(err) {
+      if (err) {
+        var msg = {
+          state: false,
+          info: "error"
+        };
+        return res.send(msg);
+      } else {
+        var msg = {
+          state: true,
+          info: "sessuss"
+        };
+        return res.send(msg);
+      }
+    })
+  })
+
+  app.get("/admin-user", function(req, res) {
+    User.getAll(function(err, users) {
+      if (err) {
+        var msg = {
+          state: false,
+          info: "请重试"
+        };
+        return res.send(msg);
+      } else {
+        res.render("admin-user", {
+          users: users
+        });
+      }
+    });
+  });
+
+  app.post('/delete-user', function(req, res) {
+    var dn = req.body.name;
+    User.delete(dn, function(err) {
+      if (err) {
+        var msg = {
+          state: false,
+          info: "error"
+        };
+        return res.send(msg);
+      } else {
+        var msg = {
+          state: true,
+          info: "sessuss"
+        };
+        return res.send(msg);
+      }
+    })
+  })
+
+  app.get("/admin-comment", function(req, res) {
+    Comment.getAll(function(err, comments) {
+      if (err) {
+        var msg = {
+          state: false,
+          info: "请重试"
+        };
+        return res.send(msg);
+      } else {
+        res.render("admin-comment", {
+          comments: comments
+        });
+      }
+    });
+  });
+
+  app.post('/delete-comment', function(req, res) {
+    Comment.delete(req.body.id, function(err) {
+      if (err) {
+        var msg = {
+          state: false,
+          info: "error"
+        };
+        return res.send(msg);
+      } else {
+        var msg = {
+          state: true,
+          info: "sessuss"
+        };
+        return res.send(msg);
+      }
+    })
   })
 }

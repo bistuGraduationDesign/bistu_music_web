@@ -206,7 +206,7 @@ Music.addTimes = function(name, callback) {
           name: name
         }, {
           $set: {
-            times: music.times+1
+            times: music.times + 1
           }
         }, function(err) {
           mongodb.close();
@@ -216,6 +216,34 @@ Music.addTimes = function(name, callback) {
           callback(null);
         });
       });
+    });
+  });
+}
+
+Music.delete = function(name, callback) {
+  //打开数据库
+  mongodb.open(function(err, db) {
+    if (err) {
+      return callback(err);
+    }
+    //读取 posts 集合
+    db.collection('musics', function(err, collection) {
+      if (err) {
+        mongodb.close();
+        return callback(err);
+      }
+      collection.remove({
+        name: name
+      }, {
+        safe: true
+      }, function(err, result) {
+        mongodb.close();
+        if (err) {
+          return callback(err);
+        }
+        callback(null);
+      });
+
     });
   });
 }
