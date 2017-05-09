@@ -12,7 +12,7 @@
             width: 100%;
             display: none;
           }
-          
+
         </style>
 </head>
 <body>
@@ -59,7 +59,7 @@
                         <th>操作</th>
                       </tr>
                     </thead>
-                    <tbody id='usersTable'>
+                    <tbody id='commentsTable'>
 
                     </tbody>
                   </table>
@@ -90,7 +90,7 @@
     $(document).ready(function() {
       comments=dataset.comments;
       //render
-      let commentsTable=$("#commentsTable");
+      let commentstable=$("#commentsTable");
       for (var i = 0; i < comments.length; i++) {
         let n=comments[i];
         commentstable.append(`
@@ -101,12 +101,12 @@
             <td>${n.time.substring(0,10)}</td>
             <td>${n.content}</td>
             <td>
-              <button class="btn btn-danger commentdelete">删除</button>
+              <button class="btn btn-danger delete-comment">删除</button>
             </td>
           </tr>
           `);
       }
-      
+
       $(".delete-comment").on('click', function(event) {
         let index=$('.delete-comment').index(this);
         $.ajax({

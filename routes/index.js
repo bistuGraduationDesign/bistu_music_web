@@ -332,8 +332,8 @@ module.exports = function(app) {
       console.log(req.body);
       let newsname = req.body.name;
       let content = req.body.content;
-      var newComment = new comment({
-        news: newsname,
+      var newComment = new Comment({
+        music: newsname,
         user: user,
         content: content
       });
@@ -354,22 +354,41 @@ module.exports = function(app) {
     }
   });
 
-  app.post('/comment', checkStatus.checkLogin);
-  app.post("/comment", function(req, res) {
-    Comment.getByName(req.body.music, function(err, musics) {
+  // app.post('/comment', checkStatus.checkLogin);
+  // app.post("/comment", function(req, res) {
+  //   Comment.getByName(req.body.music, function(err, musics) {
+  //     if (err) {
+  //       var msg = {
+  //         state: false,
+  //         info: err
+  //       };
+  //     } else {
+  //       var msg = {
+  //         state: true,
+  //         info: musics
+  //       };
+  //       return res.send(msg);
+  //     }
+  //   });
+  // });
+
+  app.get('/comment', checkStatus.checkLogin);
+  app.get("/comment", function(req, res) {
+    console.log(req.query.title)
+    Comment.getByName(req.query.title, function(err, c) {
       if (err) {
         var msg = {
           state: false,
           info: err
         };
       } else {
-        var msg = {
-          state: true,
-          info: musics
-        };
-        return res.send(msg);
+        res.render("comment",{
+          comments:c,
+          title:req.query.title
+        });
       }
     });
+
   });
 
   app.get('/logout', checkStatus.checkLogin);

@@ -59,7 +59,7 @@ Comment.getByName = function(name, callback) {
 			}
 			//查找评论名（name键）值为 name 一个文档
 			collection.find({
-				news: new RegExp(name)
+				music: new RegExp(name)
 			}, {
 				limit: 12
 			}).toArray(function(err, comment) {

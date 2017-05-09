@@ -1,0 +1,195 @@
+﻿<!DOCTYPE html>
+<html lang="zxx">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta content="" name="description">
+        <meta content="" name="keywords">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="HandheldFriendly" content="true">
+        <meta content="telephone=no" name="format-detection">
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <title></title>
+        <style >
+        .comments .media-middle {
+        font-weight: 700;
+        margin-top: 10px;
+        }
+
+        .comments h4 {
+        color: #303e4b;
+        font-size: 16px;
+        }
+
+        .comments img, .comm_info {
+        display: inline-block;
+        }
+
+        .comments .media-middle {
+        margin-bottom: 10px;
+        }
+
+        .comments__title {
+        color: #303e4b;
+        font-size: 26px;
+        font-weight: bold;
+        }
+
+        .form-control {
+        border: 1px solid #e0e0e0;
+        background-color: #f6f6f6;
+        max-width: 400px;
+        }
+
+        .form-slideToggle {
+        display: none;
+        }
+
+        .form-control {
+        border-radius: 10px !important;
+        }
+
+        .comments__form .form-group {
+        display: block !important;
+        }
+
+        .comments__form textarea {
+        resize: none;
+        }
+
+        .comments__form input {
+        width: 200px;
+        margin-top: 10px;
+        }
+
+        .btn-comment {
+        margin-top: 20px;
+        min-width: 100px;
+        color: #fff;
+        text-transform: uppercase;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #4cb6cb;
+        border-radius: 8px;
+        background-image: -webkit-linear-gradient(90deg, #4cb6cb 0%, #4cb6cb 100%);
+        background-image: -ms-linear-gradient(90deg, #4cb6cb 0%, #4cb6cb 100%);
+        -webkit-transition-property: color, background;
+        transition-property: color, background;
+        }
+
+        .btn-comment:hover {
+        color: #4cb6cb;
+        background-image: none;
+        background-color: #ffffff;
+        }
+
+        .comments__media{
+        padding-top: 20px;
+        padding-bottom: 20px;
+        }
+
+        .current {
+        text-align: center;
+        }
+
+        .current__title {
+        display: inline-block;
+        text-align: left;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        }
+
+        .current p{
+        text-align: left;
+        margin-bottom: 25px;
+        font-size: 1.3em;
+        }
+
+        .current__text {
+        text-align: left;
+        margin-bottom: 25px;
+        }
+
+        .current__quote {
+        text-align: left;
+        }
+        .media-object {
+          display: inline-block;
+          background-repeat: no-repeat;
+          height: 40px;
+          width: 40px;
+          vertical-align: top;
+          border-radius: 50%;
+        }
+        </style>
+    </head>
+    <body>
+    <div class="comments container">
+      <p class="comments__title">Comments</p>
+       <div id='comments'>
+
+      </div>
+      <div class="comments__form">
+          <div >
+              <div class="form-group">
+                  <textarea name="content" id="content" class="form-control" rows="7" required="required" ></textarea>
+              </div>
+              <button  class="btn btn-comment">send</button>
+          </div>
+      </div>
+    </div>
+    <script>
+      //dataset
+      var dataset={
+        comments:<%- JSON.stringify(comments) %>,
+        title:<%- JSON.stringify(title) %>
+      };
+      console.debug(dataset);
+    </script>
+    <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+          let commentdiv=$("#comments");
+          for (var i = 0; i < dataset.comments.length; i++) {
+            let c=dataset.comments[i];
+            commentdiv.append(`<div class="comments__media">
+              <div class="media-middle">
+                  <image class="media-object" src='music/images/a0.png'></image>
+                  <div class="comm_info">
+                      <h4 class="media-heading">${c.user.name}</h4>
+                      <span class="time">${c.time.substr(0,10)}</span>
+                  </div>
+              </div>
+              <p class="media-body">${c.content}</p>
+
+           </div>
+              `);
+          }
+          //评论
+          $('.btn-comment').on('click', function(event) {
+              let content=$('#content').val();
+              $.ajax({
+                url: '/saveComment',
+                type: 'POST',
+                data: {
+                  name: dataset.title,
+                  content: content
+                }
+              })
+              .done(function(res) {
+                console.log("success");
+                console.log(res);
+                if(res.state){
+                  location.reload();
+                }else {
+                  alert(res.info);
+                }
+              });
+          });
+
+        });
+    </script>
+    </body>
+</html>
