@@ -235,6 +235,8 @@ $(".nsplayBtn").on('click', function(event) {
   // console.debug(nsindex2);
   myPlaylist.play(nsindex2);
 });
+//评论
+
 
 //下载
 if(dataset.User.authority)$("#download").show();
@@ -248,6 +250,10 @@ $(document).on($.jPlayer.event.pause,(event)=>{
 });
 $(document).on($.jPlayer.event.play,(event)=>{
   console.debug(event.jPlayer.status.media);
+
+  let title=event.jPlayer.status.media.title;
+  $("#comment").attr('href', '/comment?title='+title);
+
   if(event.jPlayer.status.media.title==playingMusic){
 
   }else{
