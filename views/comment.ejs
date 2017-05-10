@@ -77,6 +77,21 @@
         transition-property: color, background;
         }
 
+        .btn-back {
+        margin-top: 20px;
+        min-width: 100px;
+        color: #fff;
+        text-transform: uppercase;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #4cb6cb;
+        border-radius: 8px;
+        background-image: -webkit-linear-gradient(90deg, #4cb6cb 0%, #4cb6cb 100%);
+        background-image: -ms-linear-gradient(90deg, #4cb6cb 0%, #4cb6cb 100%);
+        -webkit-transition-property: color, background;
+        transition-property: color, background;
+        }
+
         .btn-comment:hover {
         color: #4cb6cb;
         background-image: none;
@@ -135,7 +150,8 @@
               <div class="form-group">
                   <textarea name="content" id="content" class="form-control" rows="7" required="required" ></textarea>
               </div>
-              <button  class="btn btn-comment">send</button>
+              <button  id = "send" class="btn btn-comment">send</button>
+              <button  class="btn btn-back" onclick="tz()">返回上一页</button>
           </div>
       </div>
     </div>
@@ -150,6 +166,10 @@
     <script src="http://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
 		<script src="/js/bootstrap.min.js"></script>
     <script>
+    function tz(){
+    window.location.href='/music';
+}
+
         $(document).ready(function() {
           let commentdiv=$("#comments");
           for (var i = 0; i < dataset.comments.length; i++) {
