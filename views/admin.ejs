@@ -192,10 +192,12 @@
             password:password
           },
           success:function(res) {
-          	// console.log(res);
-            if(res.state){
-              location.href="/admin-music";
+          	console.log(res);
+            if(!!res.state){
+            	console.log("r");
+              window.location.href="/admin-music";
             }else {
+            	console.log("n");
               alertMsg('danger',res.info);
             }
           }

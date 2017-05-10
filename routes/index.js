@@ -403,6 +403,7 @@ module.exports = function(app) {
 
   // app.post('/admin-login', checkStatus.checkNotLogin);
   app.post('/admin-login', function(req, res) {
+    console.log("in");
     //生成密码的 md5 值
     var md5 = crypto.createHash('md5');
     var password = md5.update(req.body.password).digest('hex');
@@ -438,6 +439,7 @@ module.exports = function(app) {
         state: true,
         info: "sussess"
       };
+      console.log("out");
       console.log(msg);
       return res.send(msg);
     });
